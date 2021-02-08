@@ -78,7 +78,7 @@ class Tabelas {
         const sql = `CREATE TABLE IF NOT EXISTS equipamentos 
                     (id_equipamento int NOT NULL AUTO_INCREMENT, 
                     descricao_equipamento varchar(200) NOT NULL, 
-                    fabricante varchar(100), coletivo boolean,
+                    fabricante varchar(100), coletivo int,
                     modelo varchar(200) , codigo_cptm varchar(20) UNIQUE, PRIMARY KEY(id_equipamento))`;
     
         this.conexao.query(sql,  (erro, resultado)=> {
@@ -93,7 +93,7 @@ class Tabelas {
     criarUsuarioEquipamentos() {
         const sql = `CREATE TABLE IF NOT EXISTS usuario_equipamento 
         (id_usuario_equipamento int NOT NULL AUTO_INCREMENT PRIMARY KEY, usuario_fk int, equipamento_fk int,
-        foreign key(usuario_fk) references usuarios(id_usuario),
+        foreign key(usuario_fk) references usuarios(id_usuario), status varchar(20),
         foreign key(equipamento_fk)  references equipamentos(id_equipamento))`;
     
         this.conexao.query(sql,  (erro, resultado)=> {

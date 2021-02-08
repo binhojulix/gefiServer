@@ -19,7 +19,7 @@ class Controle {
 
     listaAssociacoes(res){
         const sql = `SELECT id_usuario_equipamento, equipamento_fk, usuario_fk, id_usuario,
-                    nome, matricula, login,
+                    nome, matricula, login,status,
                     id_equipamento, descricao_equipamento, fabricante, coletivo, modelo,codigo_cptm 
                     FROM usuario_equipamento, equipamentos, usuarios
                     where usuarios.id_usuario = usuario_equipamento.usuario_fk
@@ -44,7 +44,7 @@ class Controle {
 
             const controle ={}
             controle.id_usuario_equipamento = resultado.id_usuario_equipamento;
-  
+            controle.status = resultado.status;
 
             const equipamento_fk={};
             equipamento_fk.id = resultado.id_equipamento;

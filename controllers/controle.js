@@ -21,6 +21,7 @@ module.exports = (app) => {
         const usuario_equipamento = {};
         usuario_equipamento.usuario_fk = parseInt(req.body.usuario.id_usuario);
         usuario_equipamento.equipamento_fk = parseInt(req.body.equipamento.id_equipamento);
+        usuario_equipamento.status = "OK";
         console.log(`rota - adicionaAssociacao`);
         console.log(usuario_equipamento)
         Controle.adicionaAssociacao(usuario_equipamento,res);
