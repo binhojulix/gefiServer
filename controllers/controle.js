@@ -4,12 +4,28 @@ const autenticador	=	require('../middlewares/autenticador');
 
 module.exports = (app) => {
 
-    const publicFolder = 'process.cwd()+"/public/gefi-web/dist/gefi-web/';
+    const publicFolder = `${process.cwd()}/public/gefi-web/dist/gefi-web`;
   
    app.get('/controle', (req,res) => {
        	res.sendFile(`${publicFolder}/index.html`);
 
     });
+
+    app.get('/associacoes',(req, res)=>{
+        console.log(`rota - listaAssociacao`);
+        Controle.listaAssociacoes(res);
+    });
+
+    app.post('/associacoes', (req, res)=>{
+        console.log(req.body)
+        const usuario_equipamento = {};
+        usuario_equipamento.usuario_fk = parseInt(req.body.usuario.id_usuario);
+        usuario_equipamento.equipamento_fk = parseInt(req.body.equipamento.id_equipamento);
+        console.log(`rota - adicionaAssociacao`);
+        console.log(usuario_equipamento)
+        Controle.adicionaAssociacao(usuario_equipamento,res);
+    });
+
     
     app.post('/revisao', (req, res)=>{
         const revisao ={};

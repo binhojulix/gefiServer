@@ -3,7 +3,7 @@ const autenticador	=	require(`../middlewares/autenticador`);
 
 module.exports = (app) => {
 
-    const publicFolder = 'process.cwd()+"/public/gefi-web/dist/gefi-web/';
+    const publicFolder = `${process.cwd()}/public/gefi-web/dist/gefi-web`;
 
 
     app.get('/equipamento', (req,res) => {
@@ -31,6 +31,11 @@ module.exports = (app) => {
     app.get('/equipamentos', (req, res)=>{
         console.log("rota da lista de equipamentos");
         Equipamento.lista(res);
+    });
+
+    app.get('/equipamentosnaoassociados', (req, res)=>{
+        console.log("rota da lista de equipamentos nao associados");
+        Equipamento.listaEquipamentosNaoAssociados(res);
     });
 
     app.get('/equipamentos/:id_equipamento', (req, res)=>{

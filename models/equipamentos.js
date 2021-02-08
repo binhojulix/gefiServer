@@ -59,6 +59,19 @@ class Equipamento {
         });
     }
 
+    listaEquipamentosNaoAssociados(res){
+        const sql =`SELECT * FROM db_test.equipamentos where id_equipamento 
+        not in(SELECT equipamento_fk FROM usuario_equipamento)`;
+        conexao.query(sql,[], (erro, resultado) =>{
+            if(erro){
+                res.status(400).json(erro);
+            }else{
+                res.status(201).json(resultado);
+            }    
+        });
+    }
+
+
 
    
     pesquisarPorId(id, res){

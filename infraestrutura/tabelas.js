@@ -11,6 +11,7 @@ class Tabelas {
     this.criarUsuarios();
     this.criarRevisoes();
     this.criarControles();
+    this.criarUsuarioEquipamentos();
 
     this.inserirDepartamentos();
     this.inserirEquipamentos();
@@ -77,7 +78,7 @@ class Tabelas {
         const sql = `CREATE TABLE IF NOT EXISTS equipamentos 
                     (id_equipamento int NOT NULL AUTO_INCREMENT, 
                     descricao_equipamento varchar(200) NOT NULL, 
-                    fabricante varchar(100),
+                    fabricante varchar(100), coletivo boolean,
                     modelo varchar(200) , codigo_cptm varchar(20) UNIQUE, PRIMARY KEY(id_equipamento))`;
     
         this.conexao.query(sql,  (erro, resultado)=> {
@@ -88,6 +89,22 @@ class Tabelas {
             }
         });
     }
+
+    criarUsuarioEquipamentos() {
+        const sql = `CREATE TABLE IF NOT EXISTS usuario_equipamento 
+        (id_usuario_equipamento int NOT NULL AUTO_INCREMENT PRIMARY KEY, usuario_fk int, equipamento_fk int,
+        foreign key(usuario_fk) references usuarios(id_usuario),
+        foreign key(equipamento_fk)  references equipamentos(id_equipamento))`;
+    
+        this.conexao.query(sql,  (erro, resultado)=> {
+            if(erro) {
+                console.log(erro)
+            } else {
+                console.log(resultado)
+            }
+        });
+    }
+
 
 
     criarControles() {

@@ -2,8 +2,7 @@ const Usuario = require('../models/usuario')
 const autenticador	=	require(`../middlewares/autenticador`);
 module.exports = (app) => {
     
-    const publicFolder = 'process.cwd()+"/public/gefi-web/dist/gefi-web/';
-  
+    const publicFolder = `${process.cwd()}/public/gefi-web/dist/gefi-web`;
     app.get('/usuario', (req,res) => {
 		res.sendFile(`${publicFolder}/index.html`);
     });
@@ -15,9 +14,9 @@ module.exports = (app) => {
 
     app.post('/usuarios', (req, res) => {
         const usuario = {};
-        usuario.nome = req.body.nome;
+        usuario.nome = req.body.nome.toUpperCase();
         usuario.matricula = req.body.matricula;
-        usuario.login = req.body.login;
+        usuario.login = req.body.login.toUpperCase();
         usuario.departamento_fk = req.body.departamento_fk;
         usuario.senha = 'gefi';
         usuario.ativo = 1;

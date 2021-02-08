@@ -4,6 +4,72 @@ const conexao = require('../infraestrutura/conexao')
 
 class Controle {
 
+
+ adicionaAssociacao(associacao, res){
+    const sql = 'INSERT INTO usuario_equipamento SET ?'
+
+        conexao.query(sql, associacao, (erro, resultado) => {
+            if(erro){
+                res.status(400).json(erro);
+            }else{
+                res.status(201).json(resultado);
+            }
+        })
+    }
+
+    listaAssociacoes(res){
+        const sql = `SELECT id_usuario_equipamento, equipamento_fk, usuario_fk, id_usuario,
+                    nome, matricula, login,
+                    id_equipamento, descricao_equipamento, fabricante, coletivo, modelo,codigo_cptm 
+                    FROM usuario_equipamento, equipamentos, usuarios
+                    where usuarios.id_usuario = usuario_equipamento.usuario_fk
+                    and equipamentos.id_equipamento = usuario_equipamento.equipamento_fk; `;
+       
+        conexao.query(sql, (erro, resultado) =>{
+            
+            if(erro){
+                res.status(400).json(erro);
+            }else{
+                const controles = this.convertAssociacaoToJSON(resultado);
+                res.status(201).json(controles);
+            }
+
+        });
+
+    }
+
+    convertAssociacaoToJSON(resultados){
+        const revisaoReturn = [];
+        resultados.forEach(resultado=> {
+
+            const controle ={}
+            controle.id_usuario_equipamento = resultado.id_usuario_equipamento;
+  
+
+            const equipamento_fk={};
+            equipamento_fk.id = resultado.id_equipamento;
+            equipamento_fk.descricao_equipamento = resultado.descricao_equipamento;
+            equipamento_fk.fabricante = resultado.fabricante;
+            equipamento_fk.modelo = resultado.modelo;
+            equipamento_fk.codigo_cptm = resultado.codigo_cptm;
+            controle.equipamento = equipamento_fk;
+
+            const usuario_fk={};
+            usuario_fk.id = resultado.id_usuario;
+            usuario_fk.matricula = resultado.matricula;
+            usuario_fk.nome = resultado.nome;
+            usuario_fk.ativo = resultado.ativo;
+            controle.usuario = usuario_fk;
+
+      
+           
+            revisaoReturn.push(controle);
+
+        });
+        return revisaoReturn;
+    }
+
+
    
 
     adicionaRevisao(res, revisao){

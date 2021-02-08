@@ -6,7 +6,7 @@ const conexao = require('../infraestrutura/conexao')
 
 module.exports = (app) => {
 
-    const publicFolder = 'process.cwd()+"/public/gefi-web/dist/gefi-web/';
+    const publicFolder = `${process.cwd()}/public/gefi-web/dist/gefi-web`;
 
     app.get('/', (req,res) => {
 		res.sendFile(`${publicFolder}/index.html`);
