@@ -1,7 +1,7 @@
 const moment = require('moment')
 const conexao = require('../infraestrutura/conexao')
 
-class Asociacao {
+class Associacao {
     tabela_name = `associacoes`;
     id_name = `id`;
   

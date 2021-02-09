@@ -1,6 +1,6 @@
 const express           = require('express');
 const path	            = require('path');
-const consign           = require('consign');
+var load = require('express-load');
 const bodyParser        = require('body-parser');
 const cookieParser	    = require('cookie-parser');
 const expressSession	= require('express-session');
@@ -23,11 +23,10 @@ module.exports = () => {
 	app.use(methodOverride('_method'));
 
 	 
-	consign({ cwd: path.join(`../`, 'app') })
-    .include('models')
+	load('models',{cwd: 'app'})
 	.then('controllers')
-    .then('middleware')
-    .into(app);
+	.then('infraestrutura')
+	.into(app);
 
 
 
