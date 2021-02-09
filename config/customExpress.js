@@ -23,11 +23,11 @@ module.exports = () => {
 	app.use(methodOverride('_method'));
 
 	 
-	consign('models',{cwd: 'app'})
+	consign({ cwd: path.join(`../`, 'app') })
+    .include('models')
 	.then('controllers')
-	.then('midlleware')
-	.then('infraestrutura')
-	.into(app);
+    .then('middleware')
+    .into(app);
 
 
 
