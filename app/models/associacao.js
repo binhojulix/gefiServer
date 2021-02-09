@@ -102,7 +102,7 @@ class Asociacao {
         });
     }
 
-
+ 
 
     convertAssociacaoToJSON(resultados){
         const associacaoReturn = [];

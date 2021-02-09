@@ -8,4 +8,4 @@ const conexao = mysql.createConnection({
     database: 'db_test'
 })
 
-module.exports = conexao;
+module.exports = conexao; 

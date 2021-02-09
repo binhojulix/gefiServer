@@ -22,7 +22,7 @@ module.exports = () => {
 	app.use(bodyParser.urlencoded({ extended: true }))
 	app.use(methodOverride('_method'));
 
-	
+	 
 	consign('models',{cwd: 'app'})
 	.then('controllers')
 	.then('midlleware')

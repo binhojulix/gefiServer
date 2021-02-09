@@ -9,7 +9,7 @@ module.exports = (app) => {
     const campos ={
         descricao : `descricao`,
     }
-  
+    
     app.post(rota, (req, res)=>{
         var equipamento = req.body;
         req.assert(`${campos.descricao}`, `campo ${campos.descricao} obrigatório`).notEmpty();

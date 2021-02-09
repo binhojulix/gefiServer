@@ -17,7 +17,7 @@ class Tabelas {
     this.inserirEquipamentos();
     this.inserirRoles();
 
-
+ 
     }
 
     criarDepartamentos() {

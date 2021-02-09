@@ -5,14 +5,14 @@ module.exports = (app) => {
     const rota = `/associacoes`;
     const rotaParametro =`${rota}/:id`;
     const rotaName = `rota - associacao:`;
- 
+  
     app.post(rota, (req, res)=>{
         var associacao = req.body;
         console.log(`${rotaName} salvar`);
         Associacao.adiciona(res, associacao);
 
     });
-
+ 
     app.get(rota, (req, res)=>{
         console.log(`${rotaName} listar`);
         Associacao.lista(res);

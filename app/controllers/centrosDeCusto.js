@@ -7,12 +7,12 @@ module.exports = (app) => {
     const rota = `/centrodecustos`;
     const rotaParametro =`${rota}/:id`;
     const rotaName = `rota - centrodecusto:`;
-
+ 
     app.post(rota, (req, res)=>{
         var centrodecusto = req.body;
         console.log(`${rotaName} salvar`);
         CentroDeCusto.adiciona(res, centrodecusto);
-
+ 
     });
 
     app.get(rota, (req, res)=>{

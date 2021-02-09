@@ -11,7 +11,7 @@ module.exports = (app) => {
         login:`login`,
         privilegio:`privilegio`
     }
-  
+     
     app.post(rota, (req, res)=>{
         var usuario = req.body;
         req.assert(`${campos.nome}`, `campo ${campos.nome} obrigatório`).notEmpty();

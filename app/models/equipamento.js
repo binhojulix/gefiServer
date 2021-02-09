@@ -16,7 +16,7 @@ class Equipamento {
         });
     }
 
-
+ 
     pesquisarPorId(res, id){
         const sql = `select *from ${this.tabela_name} where ${this.id_name} = ? `;
         conexao.query(sql, [id], (erro, resultado)=>{

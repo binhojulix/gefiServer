@@ -6,12 +6,12 @@ module.exports = (app) => {
     const rota = `/controles`;
     const rotaParametro =`${rota}/:id`;
     const rotaName = `rota - controle:`;
-
+ 
     app.post(rota, (req, res)=>{
         var controle = req.body;
         console.log(`${rotaName} salvar`);
         Controle.adiciona(res, controle);
-
+ 
     });
 
     app.get(rota, (req, res)=>{

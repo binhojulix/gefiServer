@@ -6,12 +6,12 @@ const conexao = require('../infraestrutura/conexao')
 
 module.exports = (app) => {
 
-  
+   
     app.post('/autenticar', (req, res) => {
 
         login = req.body.login;
         senha = req.body.senha;
-        
+         
         console.log(`rota de autenticacao`);
 
         if(login && senha){

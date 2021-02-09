@@ -11,9 +11,9 @@ module.exports = (app) => {
         var revisao = req.body;
         console.log(`${rotaName} salvar`);
         Revisao.adiciona(res, revisao);
-
+ 
     });
-
+ 
     app.get(rota, (req, res)=>{
         console.log(`${rotaName} listar`);
         Revisao.lista(res);
