@@ -4,6 +4,7 @@ const consign           = require('consign');
 const bodyParser        = require('body-parser');
 const cookieParser	    = require('cookie-parser');
 const expressSession	= require('express-session');
+var expressValidator = require('express-validator');
 const methodOverride	= require('method-override');
 require("dotenv-safe").config();
 const jwt               = require('jsonwebtoken');
@@ -22,11 +23,11 @@ module.exports = () => {
 	app.use(methodOverride('_method'));
 
 	
-	consign()
-	.include('models')
+	consign('models',{cwd: 'app'})
 	.then('controllers')
-	.into(app)
-
+	.then('midlleware')
+	.then('infraestrutura')
+	.into(app);
 
 
 
