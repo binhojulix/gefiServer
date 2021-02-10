@@ -4,7 +4,6 @@ var load = require('express-load');
 const bodyParser        = require('body-parser');
 const cookieParser	    = require('cookie-parser');
 const expressSession	= require('express-session');
-var expressValidator = require('express-validator');
 const methodOverride	= require('method-override');
 require("dotenv-safe").config();
 const jwt               = require('jsonwebtoken');
@@ -22,7 +21,6 @@ module.exports = () => {
 	app.use(bodyParser.urlencoded({ extended: true }))
 	app.use(methodOverride('_method'));
 
-	 
 	load('models',{cwd: 'app'})
 	.then('controllers')
 	.then('infraestrutura')

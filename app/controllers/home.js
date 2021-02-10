@@ -1,6 +1,4 @@
-
 const jwt = require('jsonwebtoken');
-const autenticador	=	require('../middleware/autenticador');
 const Usuario = require('../models/usuario')
 const conexao = require('../infraestrutura/conexao')
 

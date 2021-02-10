@@ -2,8 +2,11 @@ const moment = require('moment')
 const conexao = require('../infraestrutura/conexao')
 
 class Usuario {
+
     tabela_name = `usuarios`;
     id_name = `id_usuarios`;
+    login = `login`;
+    matricula = `matricula`;
   
     adiciona(res, model){
         const sql = `insert into ${this.tabela_name} set ?`;
@@ -50,6 +53,37 @@ class Usuario {
             }
         });
     }
+
+    pesquisaPorLogin(login){
+        return new Promise((resolve, reject) => {
+            conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}
+             WHERE ${this.login} = ?`, [login], function (error, results, fields) {
+                if(!error){
+                    console.log("Login Count : "+results[0].total);
+                    return resolve(results[0].total > 0);
+                } else {
+                    return reject(new Error('Database error!!'));
+                }
+              }
+            );
+        });
+    }
+
+    pesquisaPorMatricula(matricula){
+        return new Promise((resolve, reject) => {
+            conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}
+             WHERE ${this.matricula} = ?`, [matricula], function (error, results, fields) {
+                if(!error){
+                    console.log("Matricula Count : " + results[0].total);
+                    return resolve(results[0].total > 0);
+                } else {
+                    return reject(new Error('Database error!!'));
+                }
+              }
+            );
+        });
+    }
+    
 
 
 

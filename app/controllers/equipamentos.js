@@ -1,4 +1,6 @@
 const Equipamento = require('../models/equipamento')
+const { validaEquipamento } = require('../middleware/validator/fieldsValidator.middleware')
+const { validationResult } = require('express-validator');
 
 module.exports = (app) => {
 
@@ -10,11 +12,11 @@ module.exports = (app) => {
         descricao : `descricao`,
     }
     
-    app.post(rota, (req, res)=>{
+    app.post(rota, validaEquipamento,
+        (req, res)=>{
         var equipamento = req.body;
-        req.assert(`${campos.descricao}`, `campo ${campos.descricao} obrigatório`).notEmpty();
-        var erros = req.validationErrors();
-        if(erros) {
+        const erros = validationResult(req);
+        if (!erros.isEmpty()) {
             res.status(400).json(erros);
             return;
         }
@@ -35,11 +37,12 @@ module.exports = (app) => {
     });
 
     
-    app.patch(rota, (req, res)=>{
+    app.patch(rota, validaEquipamento,
+        (req, res)=>{
         var equipamento = req.body;
-        req.assert(`${campos.descricao}`, `campo ${campos.descricao} obrigatório`).notEmpty();
-        var erros = req.validationErrors();
-        if(erros) {
+        check(`${campos.descricao}`, `campo ${campos.descricao} obrigatório`).notEmpty();
+        const erros = validationResult(req);
+        if (!erros.isEmpty()) {
             res.status(400).json(erros);
             return;
         }

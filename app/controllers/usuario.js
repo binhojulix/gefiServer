@@ -1,10 +1,21 @@
 const Usuario = require('../models/usuario')
+const { validaUsuario } = require('../middleware/validator/fieldsValidator.middleware')
+const { validationResult } = require('express-validator');
+const UserRole = require(`../utils/userRoles.utils`);
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const HttpException = require('../utils/HttpExceptions.utils');
+
+
+dotenv.config();
 
 module.exports = (app) => {
     
     const rota = `/usuarios`;
     const rotaParametro =`${rota}/:id`;
     const rotaName = `rota - usuario:`;
+
     const campos ={
         nome : `nome`,
         matricula :'matricula',
@@ -12,28 +23,35 @@ module.exports = (app) => {
         privilegio:`privilegio`
     }
      
-    app.post(rota, (req, res)=>{
-        var usuario = req.body;
-        req.assert(`${campos.nome}`, `campo ${campos.nome} obrigatório`).notEmpty();
-        req.assert(`${campos.matricula}`, `campo ${campos.matricula} obrigatório`).notEmpty();
-        req.assert(`${campos.login}`, `campo ${campos.login} obrigatório`).notEmpty();
-        req.assert(`${campos.privilegio}`, `campo ${campos.privilegio} obrigatório`).notEmpty();
-        var erros = req.validationErrors();
-        if(erros) {
-            res.status(400).json(erros);
+    app.post(rota,  validaUsuario,
+         (req, res)=>{
+
+        if(checkValidation(req, res)){
             return;
         }
-        usuario.senha = "gefi";
-        if(privilegio==='ADMIN'){
-            usuario.fk = 2;
+
+        var usuario = req.body;
+    
+        usuario.senha =  hashPassword("GEFI");
+
+        privilegio = usuario.privilegio.toUpperCase();
+
+        if(privilegio === UserRole.Admin){
+            usuario.role_fk = 1;
+        }else if(privilegio === UserRole.Gestor){
+            usuario.role_fk = 2;
         }else{
-            usuario.fk = 3;
+            usuario.role_fk = 3;
         }
+
+        delete usuario.privilegio;
 
         console.log(`${rotaName} salvar`);
         Usuario.adiciona(res, usuario);
 
     });
+
+
 
     app.get(rota, (req, res)=>{
         console.log(`${rotaName} listar`);
@@ -47,17 +65,10 @@ module.exports = (app) => {
     });
 
     
-    app.patch(rota, (req, res)=>{
+    app.patch(rota, validaUsuario,
+        (req, res)=>{
+        this.checkValidation(req);
         var usuario = req.body;
-        req.assert(`${campos.nome}`, `campo ${campos.nome} obrigatório`).notEmpty();
-        req.assert(`${campos.matricula}`, `campo ${campos.matricula} obrigatório`).notEmpty();
-        req.assert(`${campos.login}`, `campo ${campos.login} obrigatório`).notEmpty();
-        req.assert(`${campos.privilegio}`, `campo ${campos.privilegio} obrigatório`).notEmpty();
-        var erros = req.validationErrors();
-        if(erros) {
-            res.status(400).json(erros);
-            return;
-        }
         console.log(`${rotaName} atualizar`);
         Usuario.atualiza(res, usuario);
     });
@@ -69,5 +80,19 @@ module.exports = (app) => {
         Usuario.deleta(res, id);
     });
 
+
+
+    checkValidation = (req, res) => {
+        const erros = validationResult(req);
+        if (!erros.isEmpty()) {
+            res.status(400).json(erros);
+            return true;
+        }
+    }
+
+    hashPassword = (senha) => {
+        let hash = bcrypt.hashSync(senha, 10);
+        return hash;
+    }
 
 }
