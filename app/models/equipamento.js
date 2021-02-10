@@ -1,4 +1,3 @@
-const Equipamento = require("./equipamento")
 const conexao = require('../infraestrutura/conexao')
 
 class Equipamento {

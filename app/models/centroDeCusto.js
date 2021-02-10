@@ -1,5 +1,5 @@
 const moment = require('moment')
-const conexao = require('../../infraestrutura/conexao')
+const conexao = require('../infraestrutura/conexao')
 
 class CentroDeCusto {
     tabela_name = `centrodecusto`;

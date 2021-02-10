@@ -1,5 +1,5 @@
 const Controle = require('../models/controle')
-const autenticador	=	require('../middlewares/autenticador');
+const autenticador	=	require('../middleware/autenticador');
 
 module.exports = (app) => {
 
