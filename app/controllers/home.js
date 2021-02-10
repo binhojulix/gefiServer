@@ -4,7 +4,7 @@ const conexao = require('../infraestrutura/conexao')
 
 module.exports = (app) => {
 
-   
+   /*
     app.post('/autenticar', (req, res) => {
 
         login = req.body.login;
@@ -62,7 +62,7 @@ module.exports = (app) => {
             });
         }
     });
-     
+     */
 
     app.post('/logout', (req, res)=>{
         res.json({ auth: false, token: null });

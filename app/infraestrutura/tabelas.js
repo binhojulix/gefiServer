@@ -56,7 +56,7 @@ class Tabelas {
     criarUsuarios() {
         const sql = `create table if not exists usuarios 
                     (id_usuario int not null auto_increment primary key, 
-                    login varchar(20) not null unique, senha varchar(250), role_fk int, 
+                    login varchar(20) not null unique, senha varchar(255), role_fk int, 
                     trocar_senha int,
                     nome varchar(200) NOT NULL UNIQUE,
                     matricula varchar(10) NOT NULL UNIQUE, ativo int,

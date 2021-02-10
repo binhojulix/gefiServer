@@ -1,5 +1,5 @@
 const Usuario = require('../models/usuario')
-const { validaUsuario } = require('../middleware/validator/fieldsValidator.middleware')
+const { validaUsuario, validateLogin } = require('../middleware/validator/fieldsValidator.middleware')
 const { validationResult } = require('express-validator');
 const UserRole = require(`../utils/userRoles.utils`);
 const bcrypt = require('bcryptjs');
@@ -52,6 +52,53 @@ module.exports = (app) => {
     });
 
 
+    app.post('/autenticar', validateLogin, 
+      (req, res) => {
+
+        if(checkValidation(req, res)){
+            return;
+        }
+
+        const { login, senha: pass } = req.body;
+      
+
+       // const user =  Usuario.findOne(login);
+    
+        const user = {login:'fabiolu', 
+        senha:'$2a$10$ecrfF/67Y8H49WtItly1LuL49MvWWX37n7hvhVmbUhE10Rus.X1Hu', nome:'fabio', id:12, role_fk:1};
+
+        if (!user) {
+            throw new HttpException(401, 'Login indisponivel!');
+        }
+   
+       console.log(`valor do pass ${pass}`)
+       console.log(`valor da senha ${user.senha}`)
+
+       bcrypt.compare(pass, user.senha).then(function(result){
+           if(result===false)
+                console.log(result)
+                throw new HttpException(401, 'Senha incorreta!');
+        
+       });
+      
+
+      
+
+        const secretKey = process.env.SECRET || "";
+
+        
+        const token = jwt.sign({ id: user.id.toString() }, secretKey, {
+            expiresIn : 60*5*1
+        });
+
+        user.auth = true;
+        user.privilegio = getPermission(user);
+        const { senha, ...usuarioSemSenha } = user;
+        res.send({ ...usuarioSemSenha, token });
+    
+    });
+
+
 
     app.get(rota, (req, res)=>{
         console.log(`${rotaName} listar`);
@@ -95,4 +142,27 @@ module.exports = (app) => {
         return hash;
     }
 
+
+    getPermission = (usuario)=>{
+        switch (usuario.role_fk){
+            case 1:
+                usuario.privilegio = UserRole.Admin;
+                break;
+            case 2:
+                usuario.privilegio = UserRole.Gestor;
+                break;
+            case 3:
+                usuario.privilegio = UserRole.User;
+                break;
+
+        }
+        return usuario.privilegio;
+    }
+
+    function compare(encrypted, senha) {
+        bcrypt.compare(senha, encrypted, (err, res) => {
+            // res == true or res == false
+            console.log('Compared result', res, hash) 
+        })
+    }
 }

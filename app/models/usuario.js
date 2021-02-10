@@ -69,6 +69,19 @@ class Usuario {
         });
     }
 
+
+    findOne = async (login) => {
+        const sql = `UPDATE ${this.tabela_name} SET ? WHERE ${this.login} =?`;
+        conexao.query(sql,[login], (erro, resultado) =>{
+            if(erro){
+                return erro;
+            }else{
+                return resultado[0];
+            }
+        });
+    }
+
+
     pesquisaPorMatricula(matricula){
         return new Promise((resolve, reject) => {
             conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}

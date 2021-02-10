@@ -1,5 +1,4 @@
 const { check, validationResult } = require('express-validator');
-const { matricula } = require('../../models/usuario');
 const Usuario = require('../../models/usuario');
 //const auth = require('../middleware/auth.middleware');
 
@@ -8,8 +7,9 @@ const campos ={
     nome : `nome`,
     matricula :'matricula',
     login:`login`,
-    privilegio:`privilegio`
-}
+    privilegio:`privilegio`,
+    senha :`senha`
+ }
 
 exports.validaEquipamento = [
 
@@ -53,8 +53,22 @@ exports.validaUsuario =[
             throw new Error('Usuário já cadastrado!!!');
         }
     })
-    .withMessage('Login inválido!!!'),
+    .withMessage('Login inválido!!!')
 
+];
+
+exports.validateLogin = [
+    check(`${campos.login}`)
+    .notEmpty()
+    .withMessage(`campo ${campos.login} obrigatório`)
+    .exists()
+    .withMessage(`campo ${campos.login} obrigatório`),
+
+    check(`${campos.senha}`)
+    .notEmpty()
+    .withMessage(`campo ${campos.senha} obrigatório`)
+    .exists()
+    .withMessage(`campo ${campos.senha} obrigatório`)
 ];
 
 exports.centroDeCusto =[];
