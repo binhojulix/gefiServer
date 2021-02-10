@@ -74,13 +74,7 @@ module.exports = (app) => {
        console.log(`valor do pass ${pass}`)
        console.log(`valor da senha ${user.senha}`)
 
-       bcrypt.compare(pass, user.senha).then(function(result){
-           if(result===false)
-                console.log(result)
-                throw new HttpException(401, 'Senha incorreta!');
-        
-       });
-      
+        checkSenha(pass, user.senha)
 
       
 
@@ -159,10 +153,16 @@ module.exports = (app) => {
         return usuario.privilegio;
     }
 
-    function compare(encrypted, senha) {
-        bcrypt.compare(senha, encrypted, (err, res) => {
-            // res == true or res == false
-            console.log('Compared result', res, hash) 
-        })
+    async function checkSenha(senha, senhaEncrypted) {
+        //... fetch user from a db etc.
+     
+        const match = await bcrypt.compare(senha, senhaencrypted);
+     
+        if(match) {
+            //login
+            return true;
+        }
+     
+        //...
     }
 }
