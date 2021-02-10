@@ -70,17 +70,20 @@ class Usuario {
     }
 
 
-    findOne = async (login) => {
-        const sql = `UPDATE ${this.tabela_name} SET ? WHERE ${this.login} =?`;
-        conexao.query(sql,[login], (erro, resultado) =>{
-            if(erro){
-                return erro;
-            }else{
-                return resultado[0];
-            }
+    findOne(login){
+        return new Promise((resolve, reject) => {
+            conexao.query(`SELECT *FROM ${this.tabela_name}
+             WHERE ${this.login} = ?`, [login], function (error, results, fields) {
+                if(!error){
+                    console.log("Login Count : "+results[0].total);
+                    return resolve(results[0].total > 0);
+                } else {
+                    return reject(new Error('Database error!!'));
+                }
+              }
+            );
         });
     }
-
 
     pesquisaPorMatricula(matricula){
         return new Promise((resolve, reject) => {

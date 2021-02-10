@@ -65,19 +65,16 @@ module.exports = (app) => {
        // const user =  Usuario.findOne(login);
     
         const user = {login:'fabiolu', 
-        senha:'$2a$10$ecrfF/67Y8H49WtItly1LuL49MvWWX37n7hvhVmbUhE10Rus.X1Hu', nome:'fabio', id:12, role_fk:1};
+        senha:'$2a$10$g5vKP8oDXYWm0hC7YYiHsuflPm2gPoZccTzIH9Q/COiOiueE5Yciy', nome:'fabio', id:12, role_fk:1};
 
         if (!user) {
             throw new HttpException(401, 'Login indisponivel!');
         }
-   
-       console.log(`valor do pass ${pass}`)
-       console.log(`valor da senha ${user.senha}`)
 
-        checkSenha(pass, user.senha)
+        compareSenha(pass, user.senha);
 
-      
 
+        
         const secretKey = process.env.SECRET || "";
 
         
@@ -136,6 +133,16 @@ module.exports = (app) => {
         return hash;
     }
 
+    compareSenha =(senha, hash) =>{
+        retorno;
+        bcrypt.compare(senha, hash, function(err, result) {
+            if(result == true){
+                retorno = true;
+            }
+        });
+        return retorno;
+    }
+
 
     getPermission = (usuario)=>{
         switch (usuario.role_fk){
@@ -153,16 +160,5 @@ module.exports = (app) => {
         return usuario.privilegio;
     }
 
-    async function checkSenha(senha, senhaEncrypted) {
-        //... fetch user from a db etc.
-     
-        const match = await bcrypt.compare(senha, senhaencrypted);
-     
-        if(match) {
-            //login
-            return true;
-        }
-     
-        //...
-    }
+  
 }
