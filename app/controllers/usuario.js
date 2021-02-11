@@ -24,15 +24,14 @@ module.exports = (app) => {
     }
      
     app.post(rota,  validaUsuario,
-         (req, res)=>{
+         async (req, res, next)=>{
 
-        if(checkValidation(req, res)){
-            return;
-        }
+        this.checkValidation(req);
+        await this.hashPassword(req);
 
         var usuario = req.body;
+       
     
-        usuario.senha =  hashPassword("GEFI");
 
         privilegio = usuario.privilegio.toUpperCase();
 
@@ -53,7 +52,7 @@ module.exports = (app) => {
 
 
     app.post('/autenticar', validateLogin, 
-      (req, res) => {
+      (req, res, next) => {
 
         if(checkValidation(req, res)){
             return;
@@ -71,7 +70,7 @@ module.exports = (app) => {
             throw new HttpException(401, 'Login indisponivel!');
         }
 
-        compareSenha(pass, user.senha);
+       // compareSenha(pass, user.senha);
 
 
         
@@ -120,17 +119,18 @@ module.exports = (app) => {
 
 
 
-    checkValidation = (req, res) => {
-        const erros = validationResult(req);
-        if (!erros.isEmpty()) {
-            res.status(400).json(erros);
-            return true;
+    checkValidation = (req) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            throw new HttpException(400, 'Validation faild', errors);
         }
     }
 
-    hashPassword = (senha) => {
-        let hash = bcrypt.hashSync(senha, 10);
-        return hash;
+    // hash password if it exists
+    hashPassword = async (req) => {
+        if (req.body.senha) {
+            req.body.senha = await bcrypt.hash(req.body.senha, 8);
+        }
     }
 
     compareSenha =(senha, hash) =>{

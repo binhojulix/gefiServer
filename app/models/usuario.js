@@ -9,6 +9,7 @@ class Usuario {
     matricula = `matricula`;
   
     adiciona(res, model){
+       
         const sql = `insert into ${this.tabela_name} set ?`;
         conexao.query(sql, [model],(erro,  resultado) => {
             if(erro){
