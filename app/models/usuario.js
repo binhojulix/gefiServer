@@ -4,7 +4,7 @@ const conexao = require('../infraestrutura/conexao')
 class Usuario {
 
     tabela_name = `usuarios`;
-    id_name = `id_usuarios`;
+    id_name = `id`;
     login = `login`;
     matricula = `matricula`;
   
@@ -104,9 +104,9 @@ class Usuario {
 
 
 
-    atualiza(res, model){
+    atualiza(res, model, id){
         const sql = `UPDATE ${this.tabela_name} SET ? WHERE ${this.id_name} =?`;
-        conexao.query(sql,[model, model.id], (erro, resultado) =>{
+        conexao.query(sql,[model, id], (erro, resultado) =>{
             if(erro){
                 res.status(400).json(erro);
             }else{
@@ -117,7 +117,7 @@ class Usuario {
 
 
     deleta(res, id){
-        const sql = `delete ${this.tabela_name} WHERE ${this.id_name}=?`;
+        const sql = `delete from ${this.tabela_name} WHERE ${this.id_name}=?`;
         conexao.query(sql,[id], (erro, resultado) =>{
             if(erro){
                 res.status(400).json(erro);

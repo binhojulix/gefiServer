@@ -57,6 +57,26 @@ exports.validaUsuario =[
 
 ];
 
+exports.validaAtualizacaoUsuario = [
+    check(`${campos.nome}`, `campo ${campos.nome} obrigatório`).notEmpty(),
+
+    check(`${campos.privilegio}`).notEmpty().withMessage(`campo ${campos.privilegio} obrigatório`)
+    .isIn(['User', 'Admin', 'Gestor']).withMessage(`campo ${campos.privilegio} inválido`),
+    
+    check(`${campos.matricula}`)
+    .notEmpty()
+    .withMessage(`campo ${campos.matricula} obrigatório`)
+    .exists()
+    .isLength({ min: 9, max: 9 })
+    .withMessage(`campo ${campos.login} matricula inválida`),
+
+    check(`${campos.login}`)
+    .notEmpty()
+    .withMessage(`campo ${campos.login} obrigatório`)
+    .exists()
+    .isLength({ min: 6, max: 12 })
+];
+
 exports.validateLogin = [
     check(`${campos.login}`)
     .notEmpty()

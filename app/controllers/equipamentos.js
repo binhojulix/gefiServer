@@ -12,47 +12,52 @@ module.exports = (app) => {
         descricao : `descricao`,
     }
     
+    //ok
     app.post(rota, validaEquipamento,
         (req, res)=>{
-        var equipamento = req.body;
+    
         const erros = validationResult(req);
         if (!erros.isEmpty()) {
             res.status(400).json(erros);
             return;
         }
+        var equipamento = req.body;
         console.log(`${rotaName} salvar`);
         Equipamento.adiciona(res, equipamento);
 
     });
 
+    //ok
     app.get(rota, (req, res)=>{
         console.log(`${rotaName} listar`);
         Equipamento.lista(res);
     });
 
+    //ok
     app.get(rotaParametro, (req, res)=>{
-        const id = parseInt(req.body.id);
+        const id = parseInt(req.params.id);
         console.log(`${rotaName} pesquisar`);
-        Equipamento.pesquisaPorId(res, id);
+        Equipamento.pesquisarPorId(res, id);
     });
 
     
     app.patch(rota, validaEquipamento,
         (req, res)=>{
-        var equipamento = req.body;
-        check(`${campos.descricao}`, `campo ${campos.descricao} obrigatório`).notEmpty();
         const erros = validationResult(req);
         if (!erros.isEmpty()) {
             res.status(400).json(erros);
             return;
         }
+        var equipamento = req.body;
+        id = equipamento.id;
+        delete equipamento.id;
         console.log(`${rotaName} atualizar`);
-        Equipamento.atualiza(res, equipamento);
+        Equipamento.atualiza(res, equipamento, id);
     });
 
 
     app.delete(rotaParametro, (req, res)=>{
-        const id = parseInt(req.body.id);
+        const id = parseInt(req.params.id);
         console.log(`${rotaName} deletar`);
         Equipamento.deleta(res, id);
     });

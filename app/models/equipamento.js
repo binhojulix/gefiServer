@@ -2,7 +2,7 @@ const conexao = require('../infraestrutura/conexao')
 
 class Equipamento {
     tabela_name = `equipamentos`;
-    id_name = `id_equipamentos`;
+    id_name = `id`;
 
     adiciona(res, model){
         const sql = `insert into ${this.tabela_name} set ?`;
@@ -53,9 +53,9 @@ class Equipamento {
     }
 
 
-    atualiza(res, model){
+    atualiza(res, model, id){
         const sql = `UPDATE ${this.tabela_name} SET ? WHERE ${this.id_name} =?`;
-        conexao.query(sql,[model, model.id], (erro, resultado) =>{
+        conexao.query(sql,[model, id], (erro, resultado) =>{
             if(erro){
                 res.status(400).json(erro);
             }else{
@@ -66,7 +66,7 @@ class Equipamento {
 
 
     deleta(res, id){
-        const sql = `delete ${this.tabela_name} WHERE ${this.id_name}=?`;
+        const sql = `delete from ${this.tabela_name} WHERE ${this.id_name}=?`;
         conexao.query(sql,[id], (erro, resultado) =>{
             if(erro){
                 res.status(400).json(erro);
