@@ -52,43 +52,6 @@ module.exports = (app) => {
     });
 
 
-    app.post('/autenticar', validateLogin, 
-      (req, res, next) => {
-
-        if(checkValidation(req, res)){
-            return;
-        }
-
-        const { login, senha: pass } = req.body;
-      
-
-       // const user =  Usuario.findOne(login);
-    
-        const user = {login:'fabiolu', 
-        senha:'$2a$10$g5vKP8oDXYWm0hC7YYiHsuflPm2gPoZccTzIH9Q/COiOiueE5Yciy', nome:'fabio', id:12, role_fk:1};
-
-        if (!user) {
-            throw new HttpException(401, 'Login indisponivel!');
-        }
-
-       // compareSenha(pass, user.senha);
-
-
-        
-        const secretKey = process.env.SECRET || "";
-
-        
-        const token = jwt.sign({ id: user.id.toString() }, secretKey, {
-            expiresIn : 60*5*1
-        });
-
-        user.auth = true;
-        user.privilegio = getPermission(user);
-        const { senha, ...usuarioSemSenha } = user;
-        res.send({ ...usuarioSemSenha, token });
-    
-    });
-
 
     //ok
     app.get(rota, (req, res)=>{
@@ -143,17 +106,6 @@ module.exports = (app) => {
             res.status(400).json(erros);
             return true;
         }
-    }
-
-
-    compareSenha =(senha, hash) =>{
-        retorno;
-        bcrypt.compare(senha, hash, function(err, result) {
-            if(result == true){
-                retorno = true;
-            }
-        });
-        return retorno;
     }
 
 
