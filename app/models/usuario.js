@@ -43,6 +43,18 @@ class Usuario {
         });
     }
 
+    buscaPorLogin(login, promisse){
+        const sql = `select *from ${this.tabela_name} where login =?`;
+        conexao.query(sql, [login], (erro, resultado)=>{
+            if(erro){
+                throw err;
+            }else{
+               return promisse[resultado[0]];
+            }
+        });
+    }
+
+
     pesquisarPorLoginESenha(usuario, res){
         const sql = `select nome, matricula, login, ativo, trocar_senha, 
         departamento_fk from usuarios where login = ? and senha = ? `;

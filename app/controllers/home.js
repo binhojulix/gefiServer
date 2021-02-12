@@ -19,8 +19,12 @@ module.exports = (app) => {
         const { login, senha: pass } = req.body;
       
 
-       // const user =  Usuario.findOne(login);
-    
+        Usuario.buscaPorLogin(login, function(result){
+           const test = result;
+           console.log(result)
+        });
+
+
         const user = {login:'fabiolu', 
         senha:'$2a$08$aHrA8xn3vTfVxRYBrTihT.LpDl/v2uab.mtGwKUgoBUXkK3I2TA1a', nome:'fabio', id:12, role_fk:1};
 
