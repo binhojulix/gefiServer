@@ -15,8 +15,8 @@ const auth = (...roles) => {
             }
 
             const token = authHeader.replace(bearer, '');
-            const secretKey = process.env.SECRET_JWT || "";
-
+            const secretKey = process.env.SECRET || "";
+            console.log(token)
             // Verify Token
             const decoded = jwt.verify(token, secretKey);
             const user = await Usuario.findOne({ id: decoded.user_id });

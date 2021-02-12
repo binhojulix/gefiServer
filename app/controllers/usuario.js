@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const HttpException = require('../utils/HttpExceptions.utils');
+const auth = require('../middleware/auth.midleware');
 
 
 dotenv.config();
@@ -54,7 +55,7 @@ module.exports = (app) => {
 
 
     //ok
-    app.get(rota, (req, res)=>{
+    app.get(rota, auth(UserRole.Admin), (req, res)=>{
         console.log(`${rotaName} listar`);
         Usuario.lista(res);
     });
