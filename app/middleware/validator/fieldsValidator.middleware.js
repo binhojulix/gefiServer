@@ -29,13 +29,13 @@ exports.validaUsuario =[
     .withMessage(`campo ${campos.matricula} obrigatório`)
     .exists()
     .isLength({ min: 9, max: 9 })
-    .withMessage(`campo ${campos.login} matricula inválida`)
+    .withMessage(`campo ${campos.matricula} matricula inválida`)
     .isNumeric().withMessage('Formato de matricula inválida')
     .trim()
     .custom(async matricula => {
-        const value = await Usuario.pesquisaPorMatricula(matricula);
+        const value = await Usuario.findOne("matricula", matricula);
         if (value) {
-            throw new Error('Usuário já cadastrado!!!');
+            throw new Error('Matricula já cadastrado!!!');
         }
     })
     .withMessage('Matricula inválida!!!'),
@@ -48,7 +48,7 @@ exports.validaUsuario =[
     .withMessage(`campo ${campos.login} deve ter no minimo 6 caracteres e no máximo 12 caracteres`)
     .trim()
     .custom(async login => {
-        const value = await Usuario.pesquisaPorLogin(login);
+        const value = await Usuario.findOne("login", login);
         if (value) {
             throw new Error('Usuário já cadastrado!!!');
         }

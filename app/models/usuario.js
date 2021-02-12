@@ -43,35 +43,33 @@ class Usuario {
         });
     }
 
-    buscaPorLogin(login, callback){
-        const sql = `select *from ${this.tabela_name} where login =?`;
-        conexao.query(sql, [login], (erro, resultado)=>{
-            if(erro) 
-                callback(null, erro);
-            else
-             callback(null, resultado);
-        });
-    }
+ 
+
+    async getUserByLogin(array) {
+
+        let pro = new Promise((resolve, reject) => {
+          let query = `select *from ${this.tabela_name} where login = ?`;
+          conexao.query(query, [array], function (err, result) {
+              if (err) throw err; // GESTION D'ERREURS
+              resolve(result);
+          });
+        })
+        return pro.then((val) => {
+          return val[0];
+        })
+      }
 
 
-    pesquisarPorLoginESenha(usuario, res){
-        const sql = `select nome, matricula, login, ativo, trocar_senha, 
-        departamento_fk from usuarios where login = ? and senha = ? `;
-        conexao.query(sql, [usuario.login, usuario.senha], (erro, resultado)=>{
-            if(erro){
-                res.status(400).json(erro);
-            }else{
-                res.status(201).json(resultado);
-            }
-        });
-    }
+   
 
-    pesquisaPorLogin(login){
+    findOne(field, value){
         return new Promise((resolve, reject) => {
-            conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}
-             WHERE ${this.login} = ?`, [login], function (error, results, fields) {
+            const sql = `SELECT COUNT(*) AS total FROM ${this.tabela_name}
+            WHERE ${field} = ?`;
+
+            conexao.query(sql, [value], function (error, results, fields) {
                 if(!error){
-                    console.log("Login Count : "+results[0].total);
+                    console.log(" Count : "+results[0].total);
                     return resolve(results[0].total > 0);
                 } else {
                     return reject(new Error('Database error!!'));
@@ -80,38 +78,6 @@ class Usuario {
             );
         });
     }
-
-
-    findOne(login){
-        return new Promise((resolve, reject) => {
-            conexao.query(`SELECT *FROM ${this.tabela_name}
-             WHERE ${this.login} = ?`, [login], function (error, results, fields) {
-                if(!error){
-                    console.log("Login Count : "+results[0].total);
-                    return resolve(results[0].total > 0);
-                } else {
-                    return reject(new Error('Database error!!'));
-                }
-              }
-            );
-        });
-    }
-
-    pesquisaPorMatricula(matricula){
-        return new Promise((resolve, reject) => {
-            conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}
-             WHERE ${this.matricula} = ?`, [matricula], function (error, results, fields) {
-                if(!error){
-                    console.log("Matricula Count : " + results[0].total);
-                    return resolve(results[0].total > 0);
-                } else {
-                    return reject(new Error('Database error!!'));
-                }
-              }
-            );
-        });
-    }
-    
 
 
 
