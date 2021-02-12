@@ -18,15 +18,21 @@ module.exports = (app) => {
 
         const { login, senha: pass } = req.body;
       
-
-        Usuario.buscaPorLogin(login, function(result){
-           const test = result;
-           console.log(result)
+        
+        Usuario.buscaPorLogin(login, function(err,data){
+            if (err) {
+                // error handling code goes here
+                console.log("ERROR : ", err);            
+            } else {            
+                // code to execute on data retrieval
+                const user = data;
+            }    
         });
 
+      
 
-        const user = {login:'fabiolu', 
-        senha:'$2a$08$aHrA8xn3vTfVxRYBrTihT.LpDl/v2uab.mtGwKUgoBUXkK3I2TA1a', nome:'fabio', id:12, role_fk:1};
+       // const user = {login:'fabiolu', 
+       // senha:'$2a$08$aHrA8xn3vTfVxRYBrTihT.LpDl/v2uab.mtGwKUgoBUXkK3I2TA1a', nome:'fabio', id:12, role_fk:1};
 
         if (!user) {
             res.status(401).json({erros:'Login indisponivel'});

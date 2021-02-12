@@ -43,14 +43,13 @@ class Usuario {
         });
     }
 
-    buscaPorLogin(login, promisse){
+    buscaPorLogin(login, callback){
         const sql = `select *from ${this.tabela_name} where login =?`;
         conexao.query(sql, [login], (erro, resultado)=>{
-            if(erro){
-                throw err;
-            }else{
-               return promisse[resultado[0]];
-            }
+            if(erro) 
+                callback(null, erro);
+            else
+             callback(null, resultado);
         });
     }
 
