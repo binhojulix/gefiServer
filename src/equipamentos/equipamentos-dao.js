@@ -6,22 +6,24 @@ const dbRun = promisify(db.run).bind(db);
 const dbAll = promisify(db.all).bind(db);
 
 module.exports = {
-  async adiciona(post) {
+  async adiciona(equipamento) {
     try {
-      await dbRun(`INSERT INTO posts (titulo, conteudo) VALUES (?, ?)`, [
-        post.titulo,
-        post.conteudo
+      await dbRun(`INSERT INTO equipamentos (descricao, fabricante, modelo, codigoCPTM) VALUES (?, ?, ? ,?)`, [
+        equipamento.descricao,
+        equipamento.fabricante,
+        equipamento.modelo,
+        equipamento.codigoCPTM
       ]);
     } catch (erro) {
-      throw new InternalServerError('Erro ao adicionar o post!');
+      throw new InternalServerError('Erro ao adicionar o Equipamento!');
     }
   },
 
   async lista() {
     try {
-      return await dbAll(`SELECT * FROM posts`);
+      return await dbAll(`SELECT * FROM equipamentos`);
     } catch (erro) {
-      throw new InternalServerError('Erro ao listar os posts!');
+      throw new InternalServerError('Erro ao listar os equipamentos!');
     }
   }
 };

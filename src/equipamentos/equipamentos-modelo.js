@@ -1,28 +1,32 @@
-const postsDao = require('./equipamentos-dao');
+const equipamentoDao = require('./equipamentos-dao');
 const validacoes = require('../validacoes-comuns');
 
-class Post {
-  constructor(post) {
-    this.titulo = post.titulo;
-    this.conteudo = post.conteudo;
+class Equipamento {
+  constructor(equipamento) {
+    this.equipamento = equipamento.descricao;
+    this.codigoCPTM = equipamento.codigoCPTM;
+    this.modelo = equipamento.modelo;
+    this.fabricante = equipamento.fabricante;
     this.valida();
   }
 
   adiciona() {
-    return postsDao.adiciona(this);
+    return equipamentoDao.adiciona(this);
   }
 
   valida() {
-    validacoes.campoStringNaoNulo(this.titulo, 'titulo');
-    validacoes.campoTamanhoMinimo(this.titulo, 'titulo', 5);
+    validacoes.campoStringNaoNulo(this.descricao, 'descricao');
+    validacoes.campoTamanhoMinimo(this.descricao, 'descricao', 5);
 
-    validacoes.campoStringNaoNulo(this.conteudo, 'conteudo');
-    validacoes.campoTamanhoMaximo(this.conteudo, 'conteudo', 140);
+    validacoes.campoStringNaoNulo(this.conteudo, 'descricao');
+    validacoes.campoTamanhoMaximo(this.conteudo, 'descricao', 140);
+
+    validacoes.campoTamanhoMaximo(this.codigoCPTM, 'codigoCPTM', 6);
   }
 
   static lista() {
-    return postsDao.lista();
+    return equipamentoDao.lista();
   }
 }
 
-module.exports = Post;
+module.exports = Equipamento;
