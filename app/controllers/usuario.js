@@ -1,11 +1,8 @@
 const Usuario = require('../models/usuario')
-const { validaUsuario, validateLogin, validaAtualizacaoUsuario } = require('../middleware/validator/fieldsValidator.middleware')
-const { validationResult } = require('express-validator');
-const UserRole = require(`../utils/userRoles.utils`);
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const HttpException = require('../utils/HttpExceptions.utils');
+const { InvalidArgumentError } = require('../utils/erros');
+const validacoes = require('../utils/validador');
 
 
 dotenv.config();
@@ -24,28 +21,12 @@ module.exports = (app) => {
     }
     
      //ok
-    app.post(rota,  validaUsuario,
-         async (req, res, next)=>{
+    app.post(rota, async (req, res, next)=>{
 
-        if(checkValidation(req, res)){
-            return;
-        }
+        SalvaUsuario(req.body);
         var usuario = req.body;
-       
         usuario.senha = await bcrypt.hash("gefi", 8);
-
-        privilegio = usuario.privilegio.toUpperCase();
-
-        if(privilegio === UserRole.Admin){
-            usuario.role_fk = 1;
-        }else if(privilegio === UserRole.Gestor){
-            usuario.role_fk = 2;
-        }else{
-            usuario.role_fk = 3;
-        }
-
-        delete usuario.privilegio;
-
+        usuario.trocar_senha = 1;
         console.log(`${rotaName} salvar`);
         Usuario.adiciona(res, usuario);
 
@@ -64,29 +45,14 @@ module.exports = (app) => {
     //ok
     app.get(rotaParametro, (req, res)=>{
         const id = parseInt(req.params.id);
-        console.log(id)
         console.log(`${rotaName} pesquisar`);
         Usuario.pesquisarPorId(res, id);
     });
 
     //ok
-    app.patch(rota, validaAtualizacaoUsuario,
-        (req, res)=>{
-        if(checkValidation(req, res)){
-            return;
-        }
+    app.patch(rota,(req, res)=>{
         var usuario = req.body;
-        privilegio = usuario.privilegio.toUpperCase();
-
-        if(privilegio === UserRole.Admin){
-            usuario.role_fk = 1;
-        }else if(privilegio === UserRole.Gestor){
-            usuario.role_fk = 2;
-        }else{
-            usuario.role_fk = 3;
-        }
         id = usuario.id;
-        delete usuario.privilegio;
         delete usuario.id;
         console.log(`${rotaName} atualizar`);
         Usuario.atualiza(res, usuario, id);
@@ -99,43 +65,10 @@ module.exports = (app) => {
         Usuario.deleta(res, id);
     });
 
-
-
-    checkValidation = (req, res) => {
-        const erros = validationResult(req);
-        if (!erros.isEmpty()) {
-            res.status(400).json(erros);
-            return true;
-        }
-    }
-
-
-    compareSenha =(senha, hash) =>{
-        retorno;
-        bcrypt.compare(senha, hash, function(err, result) {
-            if(result == true){
-                retorno = true;
-            }
-        });
-        return retorno;
-    }
-
-
-    getPermission = (usuario)=>{
-        switch (usuario.role_fk){
-            case 1:
-                usuario.privilegio = UserRole.Admin;
-                break;
-            case 2:
-                usuario.privilegio = UserRole.Gestor;
-                break;
-            case 3:
-                usuario.privilegio = UserRole.User;
-                break;
-
-        }
-        return usuario.privilegio;
-    }
-
+ 
+    SalvaUsuario =(user)=>{
+        validacoes.campoStringNaoNulo(user.nome, 'nome');
+        validacoes.campoStringNaoNulo(user.login, 'login');
+   }
   
 }

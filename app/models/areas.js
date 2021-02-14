@@ -1,9 +1,9 @@
 const moment = require('moment')
 const conexao = require('../infraestrutura/conexao')
 
-class CentroDeCusto {
-    tabela_name = `centrodecusto`;
-    id_name = `id_centrodecusto`;
+class Area {
+    tabela_name = `areas`;
+    id_name = `id`;
   
     adiciona(res, model){
         const sql = `insert into ${this.tabela_name} set ?`;
@@ -65,4 +65,4 @@ class CentroDeCusto {
 
 }
 
-module.exports = new CentroDeCusto;
+module.exports = new Area;

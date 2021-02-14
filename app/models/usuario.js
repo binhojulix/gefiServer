@@ -24,23 +24,25 @@ class Usuario {
 
 
     pesquisarPorId(res, id){
-        const sql = `select *from ${this.tabela_name} where ${this.id_name} = ? `;
+        const sql = `select *from ${this.tabela_name} left join areas on areas.id = usuarios.area where ${this.tabela_name}.${this.id_name} = ? `;
         conexao.query(sql, [id], (erro, resultado)=>{
             if(erro){
                 res.status(400).json(erro);
             }else{
-                res.status(201).json(resultado);
+                const retorno = this.convertUsuarioToListToJson(resultado);
+                res.status(201).json(retorno);
             }
         });
     }
 
     lista(res){
-        const sql = `select *from ${this.tabela_name}`;
+        const sql = `select *from ${this.tabela_name} left join areas on areas.id = usuarios.area`;
         conexao.query(sql, [], (erro, resultado)=>{
             if(erro){
                 res.status(400).json(erro);
             }else{
-                res.status(201).json(resultado);
+                const retorno = this.convertUsuarioToListToJson(resultado);
+                res.status(201).json(retorno);
             }
         });
     }
@@ -65,55 +67,26 @@ class Usuario {
     }
 
 
+    async buscaPorMatricula(login) {
+        const query = `select *from ${this.tabela_name} where matricula = ?`;
+        try{
+            let pro = new Promise((resolve, reject) =>{
+                conexao.query(query, [login], function(erro, resultado){
+                if(erro)   throw erro;
+                    resolve(resultado);
+                });
+            });
+            return pro.then((val)=>{
+                return val[0];
+            });
+        }catch(erro){
+            throw new InternalServerError('Não foi possível encontrar o usuário!');
+        }
+    }
+
+
 
    
-    pesquisaPorLogin(login){
-        return new Promise((resolve, reject) => {
-            conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}
-             WHERE ${this.login} = ?`, [login], function (error, results, fields) {
-                if(!error){
-                    console.log("Login Count : "+results[0].total);
-                    return resolve(results[0].total > 0);
-                } else {
-                    return reject(new Error('Database error!!'));
-                }
-              }
-            );
-        });
-    }
-
-
-    findOne(login){
-        return new Promise((resolve, reject) => {
-            conexao.query(`SELECT *FROM ${this.tabela_name}
-             WHERE ${this.login} = ?`, [login], function (error, results, fields) {
-                if(!error){
-                    console.log("Login Count : "+results[0].total);
-                    return resolve(results[0].total > 0);
-                } else {
-                    return reject(new Error('Database error!!'));
-                }
-              }
-            );
-        });
-    }
-
-    pesquisaPorMatricula(matricula){
-        return new Promise((resolve, reject) => {
-            conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}
-             WHERE ${this.matricula} = ?`, [matricula], function (error, results, fields) {
-                if(!error){
-                    console.log("Matricula Count : " + results[0].total);
-                    return resolve(results[0].total > 0);
-                } else {
-                    return reject(new Error('Database error!!'));
-                }
-              }
-            );
-        });
-    }
-    
-
 
 
     atualiza(res, model, id){
@@ -139,7 +112,24 @@ class Usuario {
         });
     }
 
- 
+    convertUsuarioToListToJson(resultados){
+        const usuarioReturn = [];
+        resultados.forEach(resultado => {
+
+            const usuario = resultado;
+            console.log(resultado)
+            const area = {};
+            area.sigla = resultado.sigla;
+            area.descricao = resultado.descricao;
+            delete usuario.descricao;
+            delete usuario.sigla;
+            usuario.area = area;
+            usuarioReturn.push(usuario);
+
+        });
+        return usuarioReturn;
+    }
+
     
 }
 

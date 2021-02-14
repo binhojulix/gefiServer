@@ -8,13 +8,8 @@ class Tabelas {
     this.criarAreas();
     this.criarEquipamentos();
     this.criarUsuarios();
-    this.criarRevisoes();
     this.criarControles();
-    this.criarAssociacoes();
 
-   // this.inserirDepartamentos();
-  //  this.inserirEquipamentos();
-   // this.inserirRoles();
 
  
     }
@@ -40,13 +35,12 @@ class Tabelas {
                         (id int not null auto_increment primary key, 
                         login varchar(20) not null unique, 
                         senha varchar(255), 
-                        role varchar (10) NOT NULL check (role IN ('ADMIN','GESTOR','USER'), 
+                        role varchar (10) NOT NULL, check (role IN ('ADMIN','GESTOR','USER')), 
                         trocar_senha int,
                         nome varchar(200) NOT NULL UNIQUE,
                         matricula varchar(10) NOT NULL UNIQUE, 
-                        ativo int,
-                        area_fk int,
-                        foreign key(area_fk) references areas(id)
+                        area int,
+                        foreign key(area) references areas(id)
                     )`
                     ;
 
@@ -79,203 +73,37 @@ class Tabelas {
         });
     }
 
-    //associacoes equipamentos usuarios
-    criarAssociacoes() {
-        const sql = `CREATE TABLE IF NOT EXISTS associacoes 
-                        (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-                        usuario_fk int, 
-                        equipamento_fk int,
-                        status varchar(20) check (status IN ('ADMIN','GESTOR','USER'), 
-                        foreign key(usuario_fk) references usuarios(id_usuario), 
-                        foreign key(equipamento_fk) references equipamentos(id_equipamento)
-                        )`
-                        ;
-    
-        this.conexao.query(sql,  (erro, resultado)=> {
-            if(erro) {
-                console.log(erro)
-            } else {
-                console.log(resultado)
-            }
-        });
-    }
-
-
-
-    criarControles() {
-        const sql = `CREATE TABLE IF NOT EXISTS controles 
-        (id_controle int NOT NULL AUTO_INCREMENT, usuario_fk int, equipamento_fk int, 
-        data_devolucao datetime, data_retirada datetime  , PRIMARY KEY(id_controle), controle_status int, 
-        departamento_fk int,
-        foreign key(usuario_fk) references usuarios(id_usuario),
-        foreign key(equipamento_fk)  references equipamentos(id_equipamento),
-        foreign key(departamento_fk) references departamentos(id_departamento))`;
-
-        this.conexao.query(sql,  (erro, resultado)=> {
-            if(erro) {
-                console.log(erro)
-            } else {
-                console.log(resultado)
-            }
-        });
-    }
-
-    criarRevisoes() {
-        const sql = `CREATE TABLE IF NOT EXISTS revisoes
-        (id_revisao int NOT NULL AUTO_INCREMENT,usuario_fk int, equipamento_fk int, 
-            data_revisao datetime, PRIMARY KEY(id_revisao), revisao_status int,
-            departamento_fk int,
-            foreign key(usuario_fk) references usuarios(id_usuario),
-            foreign key(equipamento_fk)  references equipamentos(id_equipamento),
-            foreign key(departamento_fk) references departamentos(id_departamento))`;
-
-        this.conexao.query(sql,  (erro, resultado)=> {
-            if(erro) {
-                console.log(erro)
-            } else {
-                console.log(resultado)
-            }
-        });
-    }
-  
-    
-    
-
-
-
    
 
 
-/*
-    inserirDepartamentos(){
-        var departamentos = [];
+    criarControles() {
+        const sql = `CREATE TABLE IF NOT EXISTS controles(
+                        id int NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+                        area int, foreign key(area) references areas(id),
+                        solicitante int, foreign key(solicitante)  references usuarios(id),
+                        responsavel int, foreign key(responsavel)  references usuarios(id),
+                        usuarioValidador int, foreign key(usuarioValidador)  references usuarios(id),
+                        equipamento int, foreign key(equipamento)  references equipamentos(id),
+                        isDisponivelParaSolicitacao TINYINT(1),
+                        dataSolicitacao date,
+                        dataDevolucao date,
+                        isIndividual TINYINT(1),
+                        dataIndisponibilidade date,
+                        dataSolucao date,
+                        isDisponivelparaUso TINYINT(1),
+                        indisponibilidade varchar(250),
+                        solucao varchar(250))
+                    `
+                    ;
 
-        fs.createReadStream('infraestrutura/csvs/departamentos.csv')
-        .pipe(csv()).on('data', (departamento) => {
-            departamentos.push(departamento);
-        }).on('end', () => {
-            const sql = `insert into departamentos (sigla, descricao_departamento) values ?`;
-            this.conexao.query(sql,
-                [departamentos.map(eqpt =>[eqpt.sigla, eqpt.descricao_departamento])], erro => {
-                if(erro) {
-                    console.log(erro)
-                } else {
-                    console.log('Departamento Inserido com sucesso')
-                }
-            })
-        });
-    }
-
-    inserirUsuarios(){
-
-      const usuarios = [
-          {nome: 'FABIO JULIO DA LUZ', matricula:"920062970", ativo:1, login:"FABIOLU",
-          senha:"GEFI", role_fk:1, trocar_senha:1, departamento_fk:1},
-       
-          {nome: 'EDSON AKIRA KUSANO', matricula:"92006297", ativo:1, login:"EDSONK",
-          senha:"GEFI", role_fk:2, trocar_senha:1, departamento_fk:1},
-       
-          {nome: 'MARCELO BARBOSA', matricula:"9200629702", ativo:1, login:"MARCELOHB",
-          senha:"GEFI", role_fk:3, trocar_senha:1, departamento_fk:1}
-      ];
-        const sql = `insert into usuarios (nome, matricula, ativo, login, senha,
-            role_fk, trocar_senha, departamento_fk)  values ?`;
-           
-        this.conexao.query(sql, [usuarios.map(usuario => [usuario.nome, usuario.matricula,
-              usuario.ativo, usuario.login, usuario.senha, usuario.role_fk, usuario.trocar_senha,
-              usuario.departamento_fk])],
-            (erro, resultado) =>{
-            
-            if(erro){
+        this.conexao.query(sql,  (erro, resultado)=> {
+            if(erro) {
                 console.log(erro)
-            }else{
-                console.log(`Usuario inserido com sucesso`)
-                this.inserirControles();
-                this.inserirRevisoes();
+            } else {
+                console.log(resultado)
             }
-
-        });  
-    }
-
-    inserirEquipamentos(){
-        var equipamentos = [];
-
-        fs.createReadStream('infraestrutura/csvs/equipamentos.csv')
-        .pipe(csv()).on('data', (equipamento) => {
-            equipamentos.push(equipamento);
-        }).on('end', () => {
-            const sql = `insert into equipamentos (descricao_equipamento, fabricante, modelo, codigo_cptm) values ?`;
-            this.conexao.query(sql,
-                [equipamentos.map(eqpt =>[eqpt.descricao_equipamento, eqpt.fabricante, eqpt.modelo, eqpt.codigo_cptm])], erro => {
-                if(erro) {
-                    console.log(erro)
-                } else {
-                    console.log('Equipamento inserido com sucesso')
-                }
-            })
         });
     }
-
-  
-
-    inserirControles(){
-
-        const controles = [];
-
-        for(var i =1; i<=409; i++){
-
-            controles.push({usuario_fk:1, equipamento_fk:i, data_devolucao:new Date(),
-                data_retirada:new Date(), controle_status:1, departamento_fk:1});
-        }
-
-
-          const sql = `insert into controles (usuario_fk, equipamento_fk, data_devolucao,
-                       data_retirada, controle_status, departamento_fk)  values ?`;
-             
-          this.conexao.query(sql, [controles.map(controle => [controle.usuario_fk, 
-                controle.equipamento_fk,
-                controle.data_devolucao, controle.data_retirada,
-                controle.controle_status, controle.departamento_fk])],
-              (erro, resultado) =>{
-              
-              if(erro){
-                  console.log(erro)
-              }else{
-                  console.log(`Controle inserido com sucesso`)
-              }
-  
-          });  
-
-    }
-
-    inserirRevisoes(){
-        const revisoes = [];
-
-        for(var i =1; i<=409; i++){
-
-            revisoes.push({usuario_fk:1, equipamento_fk:i, data_revisao:new Date(), revisao_status:1, departamento_fk:1});
-        }
-
-
-          const sql = `insert into revisoes (usuario_fk, equipamento_fk,
-                       data_revisao, revisao_status, departamento_fk)  values ?`;
-             
-          this.conexao.query(sql, [revisoes.map(revisao => [revisao.usuario_fk, 
-                revisao.equipamento_fk, revisao.data_revisao,  revisao.revisao_status, revisao.departamento_fk])],
-              (erro, resultado) =>{
-              
-              if(erro){
-                  console.log(erro)
-              }else{
-                  console.log(`Revisao inserido com sucesso`)
-              }
-  
-          });  
-      
-
-    }
-*/
- 
 
   
 

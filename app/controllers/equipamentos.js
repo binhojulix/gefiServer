@@ -1,6 +1,7 @@
 const Equipamento = require('../models/equipamento')
-const { validaEquipamento } = require('../middleware/validator/fieldsValidator.middleware')
-const { validationResult } = require('express-validator');
+const { InvalidArgumentError } = require('../utils/erros');
+const validacoes = require('../utils/validador');
+
 
 module.exports = (app) => {
 
@@ -13,14 +14,9 @@ module.exports = (app) => {
     }
     
     //ok
-    app.post(rota, validaEquipamento,
+    app.post(rota, 
         (req, res)=>{
-    
-        const erros = validationResult(req);
-        if (!erros.isEmpty()) {
-            res.status(400).json(erros);
-            return;
-        }
+       // valida(req.body);
         var equipamento = req.body;
         console.log(`${rotaName} salvar`);
         Equipamento.adiciona(res, equipamento);
@@ -41,13 +37,8 @@ module.exports = (app) => {
     });
 
     
-    app.patch(rota, validaEquipamento,
-        (req, res)=>{
-        const erros = validationResult(req);
-        if (!erros.isEmpty()) {
-            res.status(400).json(erros);
-            return;
-        }
+    app.patch(rota, (req, res)=>{
+        valida(req.body);
         var equipamento = req.body;
         id = equipamento.id;
         delete equipamento.id;
@@ -61,6 +52,12 @@ module.exports = (app) => {
         console.log(`${rotaName} deletar`);
         Equipamento.deleta(res, id);
     });
+
+
+    valida =(equipamento)=>{
+        validacoes.campoStringNaoNulo(equipamento.descricao, 'descricao');
+
+   }
 
  
 

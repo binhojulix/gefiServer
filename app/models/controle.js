@@ -3,7 +3,7 @@ const conexao = require('../infraestrutura/conexao')
 
 class Controle {
     tabela_name = `controles`;
-    id_name = `id_controle`;
+    id_name = `id`;
 
     adiciona(res, model){
         const sql = `insert into ${this.tabela_name} set ?`;

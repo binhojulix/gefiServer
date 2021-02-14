@@ -1,5 +1,6 @@
 const Controle = require('../models/controle')
-const autenticador	=	require('../middleware/autenticador');
+const { InvalidArgumentError } = require('../utils/erros');
+const validacoes = require('../utils/validador');
 
 module.exports = (app) => {
 

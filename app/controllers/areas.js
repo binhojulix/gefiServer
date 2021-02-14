@@ -1,41 +1,45 @@
-const Associacao = require('../models/associacao')
+const CentroDeCusto = require('../models/areas');
+const { InvalidArgumentError } = require('../utils/erros');
+const validacoes = require('../utils/validador');
 
 module.exports = (app) => {
 
-    const rota = `/associacoes`;
+   
+    const rota = `/areas`;
     const rotaParametro =`${rota}/:id`;
-    const rotaName = `rota - associacao:`;
-  
-    app.post(rota, (req, res)=>{
-        var associacao = req.body;
-        console.log(`${rotaName} salvar`);
-        Associacao.adiciona(res, associacao);
-
-    });
+    const rotaName = `rota - centrodecusto:`;
  
+    app.post(rota, (req, res)=>{
+        var centrodecusto = req.body;
+        console.log(`${rotaName} salvar`);
+        CentroDeCusto.adiciona(res, centrodecusto);
+ 
+    });
+
     app.get(rota, (req, res)=>{
         console.log(`${rotaName} listar`);
-        Associacao.lista(res);
+        CentroDeCusto.lista(res);
     });
 
     app.get(rotaParametro, (req, res)=>{
         const id = parseInt(req.body.id);
         console.log(`${rotaName} pesquisar`);
-        Associacao.pesquisaPorId(res, id);
+        CentroDeCusto.pesquisaPorId(res, id);
     });
 
     
     app.patch(rota, (req, res)=>{
-        var associacao = req.body;
+        var centrodecusto = req.body;
         console.log(`${rotaName} atualizar`);
-        Associacao.atualiza(res, associacao);
+        CentrosDeCusto.atualiza(res, centrodecusto);
     });
 
 
     app.delete(rotaParametro, (req, res)=>{
         const id = parseInt(req.body.id);
         console.log(`${rotaName} deletar`);
-        Associacao.deleta(res, id);
+        CentroDeCusto.deleta(res, id);
     });
+ 
 
 }
