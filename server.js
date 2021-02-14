@@ -1,26 +1,15 @@
-const customExpress = require('./config/customExpress');
-const conexao = require('./app/infraestrutura/conexao');
-const Tabelas = require('./app/infraestrutura/tabelas');
+require('dotenv').config()
 
-conexao.connect(erro => {
-    if(erro) {
-        console.log(erro)
-    } else {
-        console.log('conectado com sucesso');
-       // Tabelas.init(conexao);
-        
-        const app = customExpress();
-        
-        app.use((req, res,next)=>{
-            res.sendFile(process.cwd()+"/public/gefi-web/dist/gefi-web/index.html")
-         });
+const app = require('./app');
+const PORT = process.env.PORT || 8080;
+require('./database');
+require('./redis/blocklist-access-token');
+require('./redis/allowlist-refresh-token');
 
-        const PORT = process.env.PORT || 8083;
+const routes = require('./rotas');
+routes(app);
 
-        app.listen(PORT, () => {
-            console.log(`Servidor rodando na porta ${PORT}...`);
-          });
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}...`);
+  });
 
-     
-    } 
-});
