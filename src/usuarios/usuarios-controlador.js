@@ -3,6 +3,7 @@ const { InvalidArgumentError } = require('../erros');
 
 const tokens = require('./tokens');
 const { EmailVerificacao } = require('./emails');
+const { verificacaoLogin } = require('./middlewares-autenticacao');
 
 function geraEndereco(rota, token) {
   const baseURL = process.env.BASE_URL;
@@ -11,20 +12,24 @@ function geraEndereco(rota, token) {
 
 module.exports = {
   async adiciona(req, res) {
-    const { nome, email, senha } = req.body;
+    const { nome, matricula, login, area} = req.body;
+    const privilegio ="User";
+  
     try {
       const usuario = new Usuario({
         nome,
-        email,
-        emailVerificado: false,
+        matricula,
+        login,
+        privilegio,
+        area
       });
-      await usuario.adicionaSenha(senha);
+      await usuario.adicionaSenha("gestaodeferramenta");
       await usuario.adiciona();
 
-      const token = tokens.verificacaoEmail.cria(usuario.id);
-      const endereco = geraEndereco('/usuario/verifica_email/', token);
-      const emailVerificacao = new EmailVerificacao(usuario, endereco);
-      emailVerificacao.enviaEmail().catch(console.log);
+     // const token = tokens.verificacaoLogin.cria(usuario.id);
+     // const endereco = geraEndereco('/usuario/verifica_email/', token);
+     // const emailVerificacao = new EmailVerificacao(usuario, endereco);
+     // emailVerificacao.enviaEmail().catch(console.log);
 
       res.status(201).json();
     } catch (erro) {
@@ -65,10 +70,19 @@ module.exports = {
     }
   },
 
-  async verificaEmail(req, res) {
+  async listaPorArea(req, res) {
+    try {
+      const usuarios = await Usuario.listaPorArea();
+      res.json(usuarios);
+    } catch (erro) {
+      res.status(500).json({ erro: erro.message });
+    }
+  },
+
+  async verificaLogin(req, res) {
     try {
       const usuario = req.user;
-      await usuario.verificaEmail();
+      await usuario.verificaLogin();
       res.status(200).json();
     } catch (erro) {
       res.status(500).json({ erro: erro.message });
@@ -84,4 +98,25 @@ module.exports = {
       res.status(500).json({ erro: erro });
     }
   },
+
+    async atualiza(req, res) {
+      const { nome, email, senha } = req.body;
+      try {
+        const usuario = new Usuario({
+          nome,
+          email,
+          emailVerificado: false,
+        });
+      
+        await Usuario.atualiza(usuario);
+
+      
+        res.status(201).json();
+      } catch (erro) {
+        if (erro instanceof InvalidArgumentError) {
+          return res.status(400).json({ erro: erro.message });
+        }
+        res.status(500).json({ erro: erro.message });
+      }
+    }
 };

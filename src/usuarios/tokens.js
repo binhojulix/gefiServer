@@ -96,8 +96,8 @@ module.exports = {
       return invalidaTokenOpaco(token, this.lista);
     }
   },
-  verificacaoEmail: {
-    nome: 'token de verificação de e-mail',
+  verificacaoLogin: {
+    nome: 'token de verificação de login',
     expiracao: [1, 'h'],
     cria(id) {
       return criaTokenJWT(id, this.expiracao);

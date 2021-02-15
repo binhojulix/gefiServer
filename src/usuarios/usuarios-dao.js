@@ -10,13 +10,16 @@ module.exports = {
   async adiciona(usuario) {
     try {
       await dbRun(
-        `INSERT INTO usuarios (nome, email, senhaHash, emailVerificado) 
-        VALUES (?, ?, ?, ?)`,
+        `INSERT INTO usuarios (nome,  matricula, login, area_fk, privilegio, senhaHash) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
         [
           usuario.nome,
-          usuario.email,
-          usuario.senhaHash,
-          usuario.emailVerificado,
+          usuario.matricula,
+          usuario.login,
+          usuario.area,
+          usuario.privilegio,
+          usuario.senhaHash
+          
         ]
       );
     } catch (erro) {
@@ -40,11 +43,58 @@ module.exports = {
     }
   },
 
+  async buscaPorArea(area_fk) {
+    try {
+      return await dbGet(`SELECT * FROM usuarios WHERE area_fk = ?`, [area_fk]);
+    } catch (erro) {
+      throw new InternalServerError('Não foi possível encontrar o usuário!');
+    }
+  },
+
+
+  async buscaPorLogin(login) {
+    try {
+      return await dbGet(`SELECT * FROM usuarios WHERE login = ?`, [login]);
+    } catch (erro) {
+      throw new InternalServerError('Não foi possível encontrar o usuário!');
+    }
+  },
+
+
+  async buscaPorLoginMatricula(login, matricula) {
+    const sql = `SELECT * FROM usuarios WHERE (login = ?) or (matricula = ?)`;
+    console.log(sql);
+    try {
+      return await dbGet(sql, [login, matricula]);
+    } catch (erro) {
+      throw new InternalServerError('Não foi possível encontrar o usuário!');
+    }
+  },
+
+ 
+
   async lista() {
     try {
       return await dbAll(`SELECT * FROM usuarios`);
     } catch (erro) {
       throw new InternalServerError('Erro ao listar usuários!');
+    }
+  },
+
+
+  async atualiza(usuario) {
+    try {
+      await dbRun(`UPDATE usuarios SET nome = ?, matricula = ?, login = ?, senhaHash = ?, email = ?, area_fk=?, privilegio_fk = ? WHERE id = ?`, [
+          usuario.nome,
+          usuario.matricula,
+          usuario.login,
+          usuario.senhaHash,
+          usuario.area,
+          usuario.privilegio,
+          usuario.id
+      ]);
+    } catch (erro) {
+      throw new InternalServerError('Erro ao modificar o usuario!');
     }
   },
 
@@ -65,5 +115,6 @@ module.exports = {
     } catch (erro) {
       throw new InternalServerError('Erro ao deletar o usuário');
     }
-  },
+  }
+
 };

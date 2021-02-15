@@ -1,6 +1,17 @@
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('db.sqlite');
 
+
+const DROP_USUARIO = `
+  DROP TABLE IF EXISTS usuarios;
+`;
+
+const DROP_AREA = `
+  DROP TABLE IF EXISTS areas;
+`;
+
+
+
 const EQUIPAMENTOS_SCHEMA = `
   CREATE TABLE IF NOT EXISTS equipamentos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,13 +34,11 @@ const USUARIOS_SCHEMA = `
   CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome VARCHAR(40) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
     matricula VARCHAR(9) NOT NULL UNIQUE,
     login VARCHAR(20) NOT NULL UNIQUE,
     senhaHash VARCHAR(255) NOT NULL,
-    area_fk NUMBER,
-    PRIVILEGIO VARCHAR(10) CHECK( pType IN ('ADMIN','GESTOR','USUARIO')),
-    emailVerificado INTEGER,
+    area_fk INTEGER,
+    PRIVILEGIO VARCHAR(10),
     FOREIGN KEY(area_fk) REFERENCES areas(id)
     )
   `;
@@ -77,6 +86,8 @@ const USUARIOS_SCHEMA = `
 
 db.serialize(() => {
   db.run('PRAGMA foreign_keys=ON');
+ // db.run(DROP_USUARIO);
+ // db.run(DROP_AREA);
   db.run(EQUIPAMENTOS_SCHEMA);
   db.run(USUARIOS_SCHEMA);
   db.run(AREAS_SCHEMA);

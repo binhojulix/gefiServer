@@ -22,14 +22,25 @@ module.exports = app => {
     .post(usuariosControlador.adiciona)
     .get(usuariosControlador.lista);
 
+
   app
-    .route('/usuario/verifica_email/:token')
+  .route('/usuario/area')
+  .get(usuariosControlador.listaPorArea);
+
+  app
+    .route('/usuario/verifica_login/:token')
     .get(
-      middlewaresAutenticacao.verificacaoEmail,
-      usuariosControlador.verificaEmail
+      middlewaresAutenticacao.verificacaoLogin,
+      usuariosControlador.verificaLogin
     );
 
   app
     .route('/usuario/:id')
     .delete(middlewaresAutenticacao.bearer, usuariosControlador.deleta);
+
+    app
+    .route('/usuario/:id')
+    .delete(middlewaresAutenticacao.bearer, usuariosControlador.atualiza);
+
+
 };

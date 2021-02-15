@@ -20,20 +20,20 @@ function verificaUsuario(usuario) {
 async function verificaSenha(senha, senhaHash) {
   const senhaValida = await bcrypt.compare(senha, senhaHash);
   if (!senhaValida) {
-    throw new InvalidArgumentError('E-mail ou senha inválidos!');
+    throw new InvalidArgumentError('Login ou senha inválidos!');
   }
 }
 
 passport.use(
   new LocalStrategy(
     {
-      usernameField: 'email',
+      usernameField: 'login',
       passwordField: 'senha',
       session: false,
     },
-    async (email, senha, done) => {
+    async (login, senha, done) => {
       try {
-        const usuario = await Usuario.buscaPorEmail(email);
+        const usuario = await Usuario.buscaPorLogin(login);
         verificaUsuario(usuario);
         await verificaSenha(senha, usuario.senhaHash);
 

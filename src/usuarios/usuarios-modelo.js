@@ -5,41 +5,47 @@ const bcrypt = require('bcrypt');
 
 class Usuario {
   constructor(usuario) {
+
     this.id = usuario.id;
     this.nome = usuario.nome;
-    this.email = usuario.email;
+    this.matricula = usuario.matricula;
+    this.login = usuario.login;
+    this.privilegio  = usuario.privilegio;
+    this.area = parseInt(usuario.area);
     this.senhaHash = usuario.senhaHash;
-    this.emailVerificado = usuario.emailVerificado;
     this.valida();
   }
 
   async adiciona() {
-    if (await Usuario.buscaPorEmail(this.email)) {
-      throw new InvalidArgumentError('O usuário já existe!');
+    const userValidate = await Usuario.buscaPorLoginMatricula(this.login, this.matricula);
+    console.log(userValidate)
+    if (userValidate) {
+      throw new InvalidArgumentError('O usuário já existe, !');
     }
-
+    console.log(this)
     await usuariosDao.adiciona(this);
-    const { id } = await usuariosDao.buscaPorEmail(this.email);
+    const { id } = await usuariosDao.buscaPorLogin(this.login);
     this.id = id;
   }
 
   async adicionaSenha(senha) {
-    validacoes.campoStringNaoNulo(senha, 'senha');
     validacoes.campoTamanhoMinimo(senha, 'senha', 8);
     validacoes.campoTamanhoMaximo(senha, 'senha', 64);
+   
+
+
 
     this.senhaHash = await Usuario.gerarSenhaHash(senha);
   }
 
   valida() {
+    validacoes.campoTamanhoPermitido(this.matricula, 'matricula', 9);
     validacoes.campoStringNaoNulo(this.nome, 'nome');
-    validacoes.campoStringNaoNulo(this.email, 'email');
+    validacoes.campoStringNaoNulo(this.matricula, 'matricula');
+    validacoes.campoStringNaoNulo(this.login, 'login');
+    validacoes.campoIntegerNaoNulo(this.area, 'area');
   }
 
-  async verificaEmail() {
-    this.emailVerificado = true;
-    await usuariosDao.modificaEmailVerificado(this, this.emailVerificado);
-  }
 
   async deleta() {
     return usuariosDao.deleta(this);
@@ -54,14 +60,26 @@ class Usuario {
     return new Usuario(usuario);
   }
 
-  static async buscaPorEmail(email) {
-    const usuario = await usuariosDao.buscaPorEmail(email);
+  static async buscaPorLogin(login) {
+    const usuario = await usuariosDao.buscaPorLogin(login);
     if (!usuario) {
       return null;
     }
 
     return new Usuario(usuario);
   }
+
+  static async buscaPorLoginMatricula(login, matricula) {
+    const usuario = await usuariosDao.buscaPorLoginMatricula(login, matricula);
+    if (!usuario) {
+      return null;
+    }
+
+    return new Usuario(usuario);
+  }
+
+
+
 
   static lista() {
     return usuariosDao.lista();

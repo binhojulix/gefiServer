@@ -72,10 +72,10 @@ module.exports = {
     }
   },
 
-  async verificacaoEmail(req, res, next) {
+  async verificacaoLogin(req, res, next) {
     try {
       const { token } = req.params;
-      const id = await tokens.verificacaoEmail.verifica(token);
+      const id = await tokens.verificacaoLogin.verifica(token);
       const usuario = await Usuario.buscaPorId(id);
       req.user = usuario;
       next();
