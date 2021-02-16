@@ -83,10 +83,13 @@ module.exports = (app) => {
         });
 
         user.auth = true;
-        user.privilegio = getPermission(user);
+        user.role = getPermission(user);
+        delete user.role_fk;
         const { senha, ...usuarioSemSenha } = user;
         res.send({ ...usuarioSemSenha, token });
     
+
+
     });
 
 

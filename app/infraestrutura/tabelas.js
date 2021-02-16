@@ -5,28 +5,26 @@ class Tabelas {
     init(conexao) {
     this.conexao = conexao;
 
-    this.criarDepartamentos();
+    this.criarAreas();
     this.criarEquipamentos();
-    this.criarRoles();
     this.criarUsuarios();
     this.criarRevisoes();
     this.criarControles();
-    this.criarUsuarioEquipamentos();
+    this.criarAssociacoes();
 
-    this.inserirDepartamentos();
-    this.inserirEquipamentos();
-    this.inserirRoles();
+   // this.inserirDepartamentos();
+  //  this.inserirEquipamentos();
+   // this.inserirRoles();
 
  
     }
 
-    criarDepartamentos() {
-
-        const sql = `CREATE TABLE IF NOT EXISTS departamentos
-                     (id_departamento int NOT NULL AUTO_INCREMENT, sigla VARCHAR(6) NOT NULL UNIQUE,
-                      descricao_departamento VARCHAR(200) NOT NULL, 
-                      PRIMARY KEY(id_departamento))`;
-
+    criarAreas() {
+        const sql = `CREATE TABLE IF NOT EXISTS areas
+                        (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, sigla VARCHAR(6) NOT NULL UNIQUE,
+                        descricao VARCHAR(200) NOT NULL
+                        )`
+                      ;
         this.conexao.query(sql,  (erro, resultado)=> {
             if(erro) {
                 console.log(erro)
@@ -36,33 +34,21 @@ class Tabelas {
         });
     }
 
-
-
-    criarRoles() {
-        const sql = `create table if not exists roles
-                    (id_role int not null auto_increment, 
-                    descricao_role varchar(20) not null unique,
-                    primary key(id_role));`;
-
-        this.conexao.query(sql,  (erro, resultado)=> {
-            if(erro) {
-                console.log(erro)
-            } else {
-                console.log(resultado)
-            }
-        });
-    }
 
     criarUsuarios() {
         const sql = `create table if not exists usuarios 
-                    (id_usuario int not null auto_increment primary key, 
-                    login varchar(20) not null unique, senha varchar(255), role_fk int, 
-                    trocar_senha int,
-                    nome varchar(200) NOT NULL UNIQUE,
-                    matricula varchar(10) NOT NULL UNIQUE, ativo int,
-                    departamento_fk int,
-                    foreign key(departamento_fk) references departamentos(id_departamento),
-                    foreign key(role_fk) references roles(id_role))`;
+                        (id int not null auto_increment primary key, 
+                        login varchar(20) not null unique, 
+                        senha varchar(255), 
+                        role varchar (10) NOT NULL check (role IN ('ADMIN','GESTOR','USER'), 
+                        trocar_senha int,
+                        nome varchar(200) NOT NULL UNIQUE,
+                        matricula varchar(10) NOT NULL UNIQUE, 
+                        ativo int,
+                        area_fk int,
+                        foreign key(area_fk) references areas(id)
+                    )`
+                    ;
 
         this.conexao.query(sql,  (erro, resultado)=> {
             if(erro) {
@@ -76,10 +62,13 @@ class Tabelas {
     
     criarEquipamentos() {
         const sql = `CREATE TABLE IF NOT EXISTS equipamentos 
-                    (id_equipamento int NOT NULL AUTO_INCREMENT, 
-                    descricao_equipamento varchar(200) NOT NULL, 
-                    fabricante varchar(100), coletivo int,
-                    modelo varchar(200) , codigo_cptm varchar(20) UNIQUE, PRIMARY KEY(id_equipamento))`;
+                        (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+                        descricao varchar(200) NOT NULL, 
+                        fabricante varchar(100), 
+                        modelo varchar(200), 
+                        codigo_cptm varchar(7) UNIQUE
+                    ) `
+                    ;
     
         this.conexao.query(sql,  (erro, resultado)=> {
             if(erro) {
@@ -90,11 +79,17 @@ class Tabelas {
         });
     }
 
-    criarUsuarioEquipamentos() {
-        const sql = `CREATE TABLE IF NOT EXISTS usuario_equipamento 
-        (id_usuario_equipamento int NOT NULL AUTO_INCREMENT PRIMARY KEY, usuario_fk int, equipamento_fk int,
-        foreign key(usuario_fk) references usuarios(id_usuario), status varchar(20),
-        foreign key(equipamento_fk)  references equipamentos(id_equipamento))`;
+    //associacoes equipamentos usuarios
+    criarAssociacoes() {
+        const sql = `CREATE TABLE IF NOT EXISTS associacoes 
+                        (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+                        usuario_fk int, 
+                        equipamento_fk int,
+                        status varchar(20) check (status IN ('ADMIN','GESTOR','USER'), 
+                        foreign key(usuario_fk) references usuarios(id_usuario), 
+                        foreign key(equipamento_fk) references equipamentos(id_equipamento)
+                        )`
+                        ;
     
         this.conexao.query(sql,  (erro, resultado)=> {
             if(erro) {
@@ -147,36 +142,11 @@ class Tabelas {
     
 
 
-   
-
-    inserirRoles(){
-
-        const roles = [
-            {descricao_role: "ADMIN" },
-            {descricao_role: "GESTOR" },
-            {descricao_role: "USER" },
-        ];
-
-      
-        const sql = `insert into roles(descricao_role) values ?`;
-           
-        this.conexao.query(sql, [roles.map(role => [role.descricao_role])],
-            (erro, resultado) =>{
-            
-            if(erro){
-                console.log(erro)
-            }else{
-                console.log(`Inserido com sucesso`);
-                this.inserirUsuarios();
-            }
-
-        });  
-    }
 
    
 
 
-
+/*
     inserirDepartamentos(){
         var departamentos = [];
 
@@ -304,8 +274,7 @@ class Tabelas {
       
 
     }
-
-  
+*/
  
 
   

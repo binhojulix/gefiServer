@@ -31,13 +31,14 @@ class Controle {
     lista(res){
         const sql = `SELECT * FROM ${this.tabela_name}
         left join usuarios on controles.usuario_fk = usuarios.id
-        left join departamentos on controles.departamento_fk = departamentos.id
+        left join areas on controles.area_fk = areas.id
         left join equipamentos on controles.equipamento_fk = equipamentos.id
         order by controles.id`
         conexao.query(sql, [], (erro, resultado)=>{
             if(erro){
                 res.status(400).json(erro);
             }else{
+                console.log(resultado)
                 const retorno = this.convertControleListToJson(resultado);
                 res.status(201).json(retorno);
             }
@@ -112,31 +113,40 @@ class Controle {
         resultados.forEach(resultado=> {
 
             const controle ={}
-            controle.id = resultado.id_controle;
+            controle.id = resultado.id;
             controle.dataDevolucao = resultado.data_devolucao;
             controle.dataRetirada = resultado.data_retirada;
-            controle.status = resultado.status;
+            if(resultado.status==0){
+                controle.status = "Indisponivel";
+
+            }else if(resultado.status ==1){
+                controle.status = "Disponivel";
+            }
+            controle.falha = resultado.descricao_falha;
+            controle.resolucao = resultado.resolucao_da_falha;
+
 
             const equipamento_fk={};
-            equipamento_fk.id = resultado.id_equipamento;
-            equipamento_fk.descricao = resultado.descricao_equipamento;
+            equipamento_fk.id = resultado.id;
+            equipamento_fk.descricao = resultado.descricao;
             equipamento_fk.fabricante = resultado.fabricante;
             equipamento_fk.modelo = resultado.modelo;
-            equipamento_fk.codigoCPTM = resultado.codigo_cptm;
+            equipamento_fk.codigo_cptm = resultado.codigo_cptm;
             controle.equipamento = equipamento_fk;
 
             const usuario_fk={};
             usuario_fk.id = resultado.id_usuario;
             usuario_fk.matricula = resultado.matricula;
             usuario_fk.nome = resultado.nome;
+            usuario_fk.login = resultado.login;
             usuario_fk.ativo = resultado.ativo;
             controle.usuario = usuario_fk;
 
             const departamento_fk={};
             departamento_fk.id = resultado.id_departamento;
-            departamento_fk.descricao = resultado.descricao_departamento;
+            departamento_fk.descricao = resultado.descricao;
             departamento_fk.sigla = resultado.sigla;
-            controle.departamento = departamento_fk;
+            controle.area = departamento_fk;
            
             revisaoReturn.push(controle);
 
