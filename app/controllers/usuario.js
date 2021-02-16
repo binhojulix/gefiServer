@@ -53,28 +53,22 @@ module.exports = (app) => {
 
 
     app.post('/autenticar', validateLogin, 
-      (req, res, next) => {
+      async (req, res, next) => {
 
         if(checkValidation(req, res)){
             return;
         }
 
         const { login, senha: pass } = req.body;
-      
+      console.log(req.body)
 
-       // const user =  Usuario.findOne(login);
-    
-        const user = {login:'fabiolu', 
-        senha:'$2a$10$g5vKP8oDXYWm0hC7YYiHsuflPm2gPoZccTzIH9Q/COiOiueE5Yciy', nome:'fabio', id:12, role_fk:1};
-
+        const user =  await Usuario.buscaPorLogin(login);
+       // console.log(user)
+       
         if (!user) {
             throw new HttpException(401, 'Login indisponivel!');
         }
 
-       // compareSenha(pass, user.senha);
-
-
-        
         const secretKey = process.env.SECRET || "";
 
         

@@ -1,5 +1,7 @@
-const moment = require('moment')
+const moment = require('moment');
+const usuario = require('../controllers/usuario');
 const conexao = require('../infraestrutura/conexao')
+const { InternalServerError } = require('../utils/erros');
 
 class Usuario {
 
@@ -43,18 +45,18 @@ class Usuario {
         });
     }
 
-    pesquisarPorLoginESenha(usuario, res){
-        const sql = `select nome, matricula, login, ativo, trocar_senha, 
-        departamento_fk from usuarios where login = ? and senha = ? `;
-        conexao.query(sql, [usuario.login, usuario.senha], (erro, resultado)=>{
-            if(erro){
-                res.status(400).json(erro);
-            }else{
-                res.status(201).json(resultado);
-            }
-        });
-    }
 
+
+    async buscaPorLogin(login) {
+        try {
+          return await conexao.query(`select *from ${this.tabela_name} where login = ?  `, [login]);
+        } catch (erro) {
+          throw new InternalServerError('Não foi possível encontrar o usuário!');
+        }
+      }
+
+
+   
     pesquisaPorLogin(login){
         return new Promise((resolve, reject) => {
             conexao.query(`SELECT COUNT(*) AS total FROM ${this.tabela_name}

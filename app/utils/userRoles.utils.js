@@ -1,6 +1,6 @@
 module.exports = {
-    Admin: 'ADMIN',
-    Gestor: 'GESTOR',
-    User:'USER'
+    Admin: 'Admin',
+    Gestor: 'Gestor',
+    User:'User'
 
 }
