@@ -48,12 +48,22 @@ class Usuario {
 
 
     async buscaPorLogin(login) {
-        try {
-          return await conexao.query(`select *from ${this.tabela_name} where login = ?  `, [login]);
-        } catch (erro) {
-          throw new InternalServerError('Não foi possível encontrar o usuário!');
+        const query = `select *from ${this.tabela_name} where login = ?`;
+        try{
+            let pro = new Promise((resolve, reject) =>{
+                conexao.query(query, [login], function(erro, resultado){
+                if(erro)   throw erro;
+                    resolve(resultado);
+                });
+            });
+            return pro.then((val)=>{
+                return val[0];
+            });
+        }catch(erro){
+            throw new InternalServerError('Não foi possível encontrar o usuário!');
         }
-      }
+    }
+
 
 
    

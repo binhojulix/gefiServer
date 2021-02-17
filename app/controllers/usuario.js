@@ -58,20 +58,12 @@ module.exports = (app) => {
         if(checkValidation(req, res)){
             return;
         }
-
         const { login, senha: pass } = req.body;
-      console.log(req.body)
-
         const user =  await Usuario.buscaPorLogin(login);
-       // console.log(user)
-       
         if (!user) {
-            throw new HttpException(401, 'Login indisponivel!');
+             throw new InternalServerError('Não foi possível encontrar o usuário!');
         }
-
         const secretKey = process.env.SECRET || "";
-
-        
         const token = jwt.sign({ id: user.id.toString() }, secretKey, {
             expiresIn : 60*5*1
         });
@@ -81,9 +73,6 @@ module.exports = (app) => {
         delete user.role_fk;
         const { senha, ...usuarioSemSenha } = user;
         res.send({ ...usuarioSemSenha, token });
-    
-
-
     });
 
 
