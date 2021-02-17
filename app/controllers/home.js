@@ -40,8 +40,11 @@ module.exports = (app) => {
       res.send({ ...usuarioSemSenha, token });
   });
 
+
     app.post('/logout', (req, res)=>{
         res.json({ auth: false, token: null });
     });
+
+    
    
 }
