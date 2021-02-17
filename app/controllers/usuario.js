@@ -52,36 +52,7 @@ module.exports = (app) => {
     });
 
 
-    app.post('/autenticar', validateLogin, 
-      async (req, res, next) => {
-
-        if(checkValidation(req, res)){
-            return;
-        }
-        const { login, senha: pass } = req.body;
-        const user =  await Usuario.buscaPorLogin(login);
-
-        if (!user) {
-            res.status(401).json({"Erro": "Usuário inválido"});
-        }
-        const isMatch = await bcrypt.compare(pass, user.senha);
-      
-        if (!isMatch) {
-            res.status(401).json({"Erro": "Senha invalida"});
-        }
-
-        const secretKey = process.env.SECRET || "";
-        const token = jwt.sign({ id: user.id.toString() }, secretKey, {
-            expiresIn : 60*5*1
-        });
-
-        user.auth = true;
-        user.role = getPermission(user);
-        delete user.role_fk;
-        const { senha, ...usuarioSemSenha } = user;
-        res.send({ ...usuarioSemSenha, token });
-    });
-
+    
 
     //ok
     app.get(rota, (req, res)=>{

@@ -1,68 +1,44 @@
-const jwt = require('jsonwebtoken');
 const Usuario = require('../models/usuario')
-const conexao = require('../infraestrutura/conexao')
+const { validaUsuario, validateLogin, validaAtualizacaoUsuario } = require('../middleware/validator/fieldsValidator.middleware')
+const { validationResult } = require('express-validator');
+const UserRole = require(`../utils/userRoles.utils`);
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const HttpException = require('../utils/HttpExceptions.utils');
+
 
 module.exports = (app) => {
 
-   /*
-    app.post('/autenticar', (req, res) => {
+    app.post('/autenticar', validateLogin, 
+    async (req, res, next) => {
 
-        login = req.body.login;
-        senha = req.body.senha;
-         
-        console.log(`rota de autenticacao`);
+      if(checkValidation(req, res)){
+          return;
+      }
+      const { login, senha: pass } = req.body;
+      const user =  await Usuario.buscaPorLogin(login);
 
-        if(login && senha){
-            const sql = `select  id_usuario, login, role_fk,
-            trocar_senha, nome, matricula, ativo, departamento_fk
-            from usuarios where login = ? and senha = ? `;
+      if (!user) {
+          res.status(401).json({"Erro": "Usuário inválido"});
+      }
+      const isMatch = await bcrypt.compare(pass, user.senha);
+    
+      if (!isMatch) {
+          res.status(401).json({"Erro": "Senha invalida"});
+      }
 
-            conexao.query(sql, [login, senha], (erro, resultado)=>{
-                if(erro){
-                    res.status(400).json(erro);
-                }else{
- 
-                    if(resultado.length > 0 ){
-                        const id = resultado[0].id_usuario;
-                        var token = jwt.sign({ id }, process.env.SECRET, {
-                            expiresIn: 300 // expires in 5min
-                          });
+      const secretKey = process.env.SECRET || "";
+      const token = jwt.sign({ id: user.id.toString() }, secretKey, {
+          expiresIn : 60*5*1
+      });
 
-                        usuario = {};
-
-                        usuario.id = resultado[0].id_usuario;
-                        usuario.login = resultado[0].login;
-                        usuario.role_fk = resultado[0].role_fk;
-                        usuario.trocarSenha = resultado[0].trocar_senha;
-                        usuario.departamento = resultado[0].departamento_fk;
-                        usuario.token = token;
-                        usuario.auth = true;
-                        usuario.status = resultado[0].ativo;
-                      
-                        usuario.senha = "123";
-
-                        switch (usuario.role_fk){
-                            case 1:
-                                usuario.privilegio = "ADMIN";
-                                break;
-                            case 2:
-                                usuario.privilegio = "USER";
-                                break;
-                            case 3:
-                                usuario.privilegio = "GESTOR";
-                                break;
-
-                        }
-                        res.status(200).json(usuario);
-                    }else{
-                        res.status(500).json({message: 'Login inválido!'});
-                    }
-                    
-                }
-            });
-        }
-    });
-     */
+      user.auth = true;
+      user.role = getPermission(user);
+      delete user.role_fk;
+      const { senha, ...usuarioSemSenha } = user;
+      res.send({ ...usuarioSemSenha, token });
+  });
 
     app.post('/logout', (req, res)=>{
         res.json({ auth: false, token: null });
