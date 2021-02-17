@@ -60,9 +60,16 @@ module.exports = (app) => {
         }
         const { login, senha: pass } = req.body;
         const user =  await Usuario.buscaPorLogin(login);
+
         if (!user) {
-             throw new InternalServerError('Não foi possível encontrar o usuário!');
+            res.status(401).json({"Erro": "Usuário inválido"});
         }
+        const isMatch = await bcrypt.compare(pass, user.senha);
+      
+        if (!isMatch) {
+            res.status(401).json({"Erro": "Senha invalida"});
+        }
+
         const secretKey = process.env.SECRET || "";
         const token = jwt.sign({ id: user.id.toString() }, secretKey, {
             expiresIn : 60*5*1
