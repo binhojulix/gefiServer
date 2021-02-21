@@ -2,7 +2,7 @@
   "name": "gefi",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "pm2 start server.js --name gefi",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -35,7 +35,11 @@
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
     "moment": "^2.24.0",
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "mysql2": "^2.2.5",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.5.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.4"

@@ -1,33 +1,17 @@
-const express           = require('express');
-const path	            = require('path');
-var load = require('express-load');
-const bodyParser        = require('body-parser');
-const cookieParser	    = require('cookie-parser');
-const expressSession	= require('express-session');
-const methodOverride	= require('method-override');
-require("dotenv-safe").config();
-const jwt               = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+const express = require('express');
+const cors = require('cors');
 
 module.exports = () => {
 
-	var cors = require('cors');
 	const app = express();
-	app.use(cors({origin: '*'}));
-	app.use(cookieParser('gefi'));
-
-	app.use(expressSession());
-	app.use(bodyParser.json())
-	//app.use(express.static(process.cwd()+"/public/gefi-web/dist/gefi-web/"));
-	app.use(bodyParser.urlencoded({ extended: true }))
-	app.use(methodOverride('_method'));
-
-	load('models',{cwd: 'app'})
-	.then('controllers')
-	.then('infraestrutura')
-	.into(app);
-
-
-
- 
+	app.use(bodyParser.json({ limit: '50mb' }));
+	app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+	app.use(cors("*"));
+	app.use('/', require('../src/usuario/index'));
+	app.use('/', require('../src/area/index'));
+	app.use('/', require('../src/solicitacao/index'));
+	app.use('/', require('../src/equipamento/index'));
+	app.use('/', require('../src/controle/index'));
  return app
 }
