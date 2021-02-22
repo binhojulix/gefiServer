@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
   Usuario.associate = function(models) {
     // associations can be defined here
    
-    Usuario.belongsTo(models.Areas, {foreignKey: 'usuario_id', targetKey: 'id'});
+    Usuario.belongsTo(models.Areas, {foreignKey: 'area_id', targetKey: 'id'});
     Usuario.hasMany(models.Solicitacoes, {foreignKey: 'usuario_id', sourceKey: 'id'});
     Usuario.hasMany(models.Controles, {foreignKey: 'usuario_id', sourceKey: 'id'});
   };

@@ -32,16 +32,19 @@ class ControleController {
     static async buscaPorId(req, res) {
       const { id } = req.params
       try {
-        const Controle = await database.Controles.findOne( { 
+    
+        const controle = await database.Controles.findAll( { 
           where: { 
-            id: Number(id) 
-          }
+            id: Number(id) ,
+          },
+          include: [database.Areas, database.Equipamentos, database.Usuarios]
+
         });
 
-        if(!Controle){
+        if(!controle){
           throw new HttpException(404, 'controle não encontrado');
       }
-        return res.status(200).json(umaPessoa)
+        return res.status(200).json(controle)
       } catch (error) {
         return res.status(500).json(error.message)
       }
