@@ -42,6 +42,19 @@ module.exports = {
       throw new InvalidArgumentError(
         `O campo ${nome} precisa ser igual que ${maximo} caracteres!`
       );
+  },
+
+  valoresPermitidos(valor, nome, permitidos) {
+    const contain = false;
+    permitido.forEach(permitido => {
+        if(permitido===valor){
+          contain = true;
+        }
+    });
+    if (contain)
+      throw new InvalidArgumentError(
+        `O campo ${nome} precisa ser igual que ${maximo} caracteres!`
+      );
   }
 
 

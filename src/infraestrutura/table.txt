@@ -1,0 +1,2 @@
+npx sequelize-cli model:generate --name Area --attributes descricao:string,sigla:string
+npx sequelize-cli db:migrate
